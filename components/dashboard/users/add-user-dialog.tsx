@@ -18,6 +18,14 @@ const defaultStores = [
   "Pet Shop",
 ];
 
+const defaultRoles = [
+  "Admin",
+  "Manager",
+  "Editor",
+  "Viewer",
+  "Support"
+];
+
 type AddUserDialogProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -26,11 +34,11 @@ type AddUserDialogProps = {
   stores?: string[];
 };
 
-export function AddUserDialog({ open, setOpen, onAddUser, roles = [], stores = defaultStores }: AddUserDialogProps) {
+export function AddUserDialog({ open, setOpen, onAddUser, roles = defaultRoles, stores = defaultStores }: AddUserDialogProps) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("");
-  const [allStores, setAllStores] = useState(true);
+  const [allStores, setAllStores] = useState(false);
   const [selectedStores, setSelectedStores] = useState<string[]>([]);
   const [storeSearch, setStoreSearch] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -68,7 +76,7 @@ export function AddUserDialog({ open, setOpen, onAddUser, roles = [], stores = d
     setFullName("");
     setEmail("");
     setRole("");
-    setAllStores(true);
+    setAllStores(false);
     setSelectedStores([]);
     setStoreSearch("");
   }
