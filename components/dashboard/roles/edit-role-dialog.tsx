@@ -8,7 +8,7 @@ import { ConfirmDialog } from "./confirm-dialog";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Switch } from "@/components/ui/switch";
 import { defaultPermissionsGroups } from "./roles-permissions-data";
-import { User } from "@/app/admin/users/page";
+import type { User } from "@/types/user";
 
 interface EditRoleDialogProps {
   open: boolean;
@@ -22,6 +22,7 @@ interface EditRoleDialogProps {
 export function EditRoleDialog({ open, setOpen, role, onSave, onDelete, usersWithRole }: EditRoleDialogProps) {
   const [editRole, setEditRole] = useState(role || { name: "", description: "" });
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [showAllUsers, setShowAllUsers] = useState(false);
   // Local permissions state for toggling
   const [permissions, setPermissions] = useState(() =>
     defaultPermissionsGroups.map(group => ({
@@ -78,7 +79,7 @@ export function EditRoleDialog({ open, setOpen, role, onSave, onDelete, usersWit
               <div className="font-medium mb-1">Users with this role</div>
               <div className="text-xs text-muted-foreground mb-2">{usersWithRole.length} users currently have this role</div>
               <div className="space-y-2">
-                {usersWithRole.slice(0, 3).map(user => (
+                {usersWithRole.slice(0, showAllUsers ? undefined : 3).map(user => (
                   <div key={user.email} className="flex items-center gap-2 bg-muted rounded px-2 py-1">
                     <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-bold">
                       {user.initials}
@@ -89,7 +90,14 @@ export function EditRoleDialog({ open, setOpen, role, onSave, onDelete, usersWit
                     </div>
                   </div>
                 ))}
-                {usersWithRole.length > 3 && <div className="text-xs text-blue-600 cursor-pointer">View All</div>}
+                {usersWithRole.length > 3 && (
+                  <div 
+                    className="text-xs text-blue-600 cursor-pointer hover:text-blue-700"
+                    onClick={() => setShowAllUsers(!showAllUsers)}
+                  >
+                    {showAllUsers ? "Show Less" : "View All"}
+                  </div>
+                )}
               </div>
             </div>
             <div className="mt-4">

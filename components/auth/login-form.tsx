@@ -15,29 +15,91 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { LogIn } from "lucide-react";
+import { CheckCircle, Mail, Loader2, LogIn } from "lucide-react";
+import { useState } from "react";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  rememberMe: z.boolean().default(false),
 });
 
 export function LoginForm() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
-      password: "",
-      rememberMe: false,
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    router.push("/store-selection");
+    try {
+      setIsLoading(true);
+      // Here you would typically make an API call to send the magic link
+      console.log("Sending magic link to:", values.email);
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setEmailSent(true);
+      
+      // Simulate successful login after 2 seconds
+      setTimeout(() => {
+        setIsLoggedIn(true);
+        router.push("/store-selection");
+      }, 2000);
+    } catch (error) {
+      console.error("Error sending magic link:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  if (isLoggedIn) {
+    return (
+      <div className="text-center space-y-4">
+        <div className="rounded-full bg-green-100 p-3 w-fit mx-auto">
+          <LogIn className="h-6 w-6 text-green-600" />
+        </div>
+        <h3 className="text-lg font-medium">Successfully logged in!</h3>
+        <p className="text-sm text-muted-foreground">
+          Redirecting to store selection...
+        </p>
+      </div>
+    );
+  }
+
+  if (emailSent) {
+    return (
+      <div className="text-center space-y-4">
+        <div className="rounded-full bg-green-100 p-3 w-fit mx-auto">
+          <CheckCircle className="h-6 w-6 text-green-600" />
+        </div>
+        <h3 className="text-lg font-medium">Check your email</h3>
+        <p className="text-sm text-muted-foreground">
+          We sent a magic link to {form.getValues("email")}. Click the link to sign in.
+        </p>
+        <div className="flex flex-col gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setEmailSent(false)}
+            className="mt-4"
+          >
+            Use a different email
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setIsLoggedIn(true);
+              router.push("/store-selection");
+            }}
+            className="text-sm text-blue-600 hover:text-blue-700"
+          >
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -56,42 +118,22 @@ export function LoginForm() {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="••••••••" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+        <Button 
+          type="submit" 
+          className="w-full bg-blue-600 hover:bg-blue-700"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Sending magic link...
+            </>
+          ) : (
+            <>
+              <Mail className="mr-2 h-4 w-4" />
+              Send magic link
+            </>
           )}
-        />
-        <div className="flex items-center justify-between">
-          <FormField
-            control={form.control}
-            name="rememberMe"
-            render={({ field }) => (
-              <FormItem className="flex items-center space-x-2">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <FormLabel className="text-sm font-normal cursor-pointer">Remember me</FormLabel>
-              </FormItem>
-            )}
-          />
-          <Button variant="link" className="px-0 text-blue-600 hover:text-blue-700">
-            Forgot password?
-          </Button>
-        </div>
-        <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
-          <LogIn className="mr-2 h-4 w-4" />
-          Sign in
         </Button>
       </form>
     </Form>

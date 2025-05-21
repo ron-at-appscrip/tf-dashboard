@@ -16,9 +16,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useState } from "react";
 
 export default function StoresPage() {
   const { stores } = useStores();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all-status");
+  const [integrationFilter, setIntegrationFilter] = useState("all-integration");
+
+  const hasActiveFilters = searchQuery || statusFilter !== "all-status" || integrationFilter !== "all-integration";
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setStatusFilter("all-status");
+    setIntegrationFilter("all-integration");
+  };
 
   return (
     <AdminLayout>
@@ -54,10 +66,12 @@ export default function StoresPage() {
                   type="search"
                   placeholder="Search stores..."
                   className="pl-8"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
               <div className="flex gap-2">
-                <Select defaultValue="all-status">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-[140px]">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
@@ -68,7 +82,7 @@ export default function StoresPage() {
                     <SelectItem value="pending">Pending</SelectItem>
                   </SelectContent>
                 </Select>
-                <Select defaultValue="all-integration">
+                <Select value={integrationFilter} onValueChange={setIntegrationFilter}>
                   <SelectTrigger className="w-[140px]">
                     <SelectValue placeholder="Integration" />
                   </SelectTrigger>
@@ -79,10 +93,11 @@ export default function StoresPage() {
                     <SelectItem value="both">Both</SelectItem>
                   </SelectContent>
                 </Select>
-                <Button variant="outline">
-                  <Filter className="mr-2 h-4 w-4" />
-                  Filters
-                </Button>
+                {hasActiveFilters && (
+                  <Button variant="outline" onClick={clearFilters}>
+                    Clear Filters
+                  </Button>
+                )}
               </div>
             </div>
           </CardHeader>

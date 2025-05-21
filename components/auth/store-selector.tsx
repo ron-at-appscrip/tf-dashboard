@@ -1,8 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Home, Leaf, ShoppingBag, ChevronRight } from "lucide-react";
+import { Home, Leaf, ShoppingBag, ChevronRight, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { useState } from "react";
 
 const stores = [
   {
@@ -37,6 +38,14 @@ const stores = [
 
 export function StoreSelector() {
   const router = useRouter();
+  const [loadingStore, setLoadingStore] = useState<string | null>(null);
+
+  const handleStoreSelect = (store: typeof stores[0]) => {
+    if (store.disabled) return;
+    
+    setLoadingStore(store.id);
+    router.push(store.href);
+  };
 
   return (
     <div className="space-y-3">
@@ -48,7 +57,7 @@ export function StoreSelector() {
               ? "opacity-60 cursor-not-allowed"
               : "hover:shadow-md cursor-pointer"
           }`}
-          onClick={() => !store.disabled && router.push(store.href)}
+          onClick={() => handleStoreSelect(store)}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -62,7 +71,11 @@ export function StoreSelector() {
                 </p>
               </div>
             </div>
-            <ChevronRight className="h-5 w-5 text-gray-400" />
+            {loadingStore === store.id ? (
+              <Loader2 className="h-5 w-5 text-blue-600 animate-spin" />
+            ) : (
+              <ChevronRight className="h-5 w-5 text-gray-400" />
+            )}
           </div>
         </Card>
       ))}

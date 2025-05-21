@@ -102,7 +102,10 @@ export const storeColumns: ColumnDef<Store>[] = [
     cell: ({ row }) => {
       const isActive = row.getValue("is_active") as boolean;
       return (
-        <Badge variant={isActive ? "default" : "secondary"}>
+        <Badge 
+          variant="outline" 
+          className={isActive ? "bg-green-50 text-green-700 border-green-200" : "bg-red-50 text-red-700 border-red-200"}
+        >
           {isActive ? "Active" : "Inactive"}
         </Badge>
       );

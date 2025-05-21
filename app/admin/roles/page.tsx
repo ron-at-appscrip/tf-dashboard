@@ -1,190 +1,142 @@
 "use client"
 
+import { useState } from "react";
 import { AdminLayout } from "@/components/layout/admin-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, Plus, Trash, Edit } from "lucide-react";
 import { DataTable } from "@/components/dashboard/data-table";
 import { roleColumns, Role } from "@/components/dashboard/roles/columns";
-import { useState, useEffect } from "react";
 import { AddRoleDialog } from "@/components/dashboard/roles/add-role-dialog";
 import { DefaultPermissions } from "@/components/dashboard/roles/default-permissions";
 import { rolesData } from "@/components/dashboard/roles/roles-data";
 import { ConfirmDialog } from "@/components/dashboard/roles/confirm-dialog";
 import { EditRoleDialog } from "@/components/dashboard/roles/edit-role-dialog";
-import { usersData, User } from "@/app/admin/users/page";
+import { usersData } from "@/data/users";
+import type { User } from "@/types/user";
+import { Button } from "@/components/ui/button";
 
-export default function UsersPage() {
+interface RoleData {
+  name: string;
+  description: string;
+  users: number;
+  color: string;
+}
+
+export default function RolesPage() {
   const [tab, setTab] = useState("roles");
-  const [search, setSearch] = useState("");
-  const [roles, setRoles] = useState<Role[]>(rolesData);
-  const [open, setOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [roleToDelete, setRoleToDelete] = useState<string | null>(null);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<Role | null>(null);
-  const [users, setUsers] = useState<User[]>(usersData);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<RoleData | null>(null);
 
-  // Get users with the selected role
-  const getUsersWithRole = (roleName: string): User[] => {
-    return users.filter(user => user.role === roleName);
-  };
+  const roles: RoleData[] = Array.from(new Set(usersData.map((user: User) => user.role))).map(role => ({
+    name: role,
+    description: `Users with ${role} role`,
+    users: usersData.filter((user: User) => user.role === role).length,
+    color: usersData.find((user: User) => user.role === role)?.roleColor || "bg-gray-100 text-gray-700"
+  }));
 
-  // Update role user counts whenever users change
-  useEffect(() => {
-    setRoles(prevRoles => 
-      prevRoles.map(role => ({
-        ...role,
-        users: users.filter(user => user.role === role.name).length
-      }))
-    );
-  }, [users]);
-
-  const filteredRoles = roles.filter((role) =>
-    role.name.toLowerCase().includes(search.toLowerCase())
+  const filteredRoles = roles.filter(role =>
+    role.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  function handleAddRole(role: Role) {
-    setRoles([...roles, role]);
-  }
-
-  function handleDeleteRole(roleName: string) {
-    setRoleToDelete(roleName);
-    setDeleteDialogOpen(true);
-  }
-
-  function confirmDeleteRole() {
-    if (roleToDelete) {
-      // Update users to remove this role
-      setUsers(users.map(user => 
-        user.role === roleToDelete 
-          ? { ...user, role: "No Role" } 
-          : user
-      ));
-      setRoles(roles.filter(r => r.name !== roleToDelete));
-      setRoleToDelete(null);
-    }
-  }
-
-  function handleEditRole(roleName: string) {
-    const role = roles.find(r => r.name === roleName) || null;
-    setSelectedRole(role);
-    setEditDialogOpen(true);
-  }
-
-  function handleSaveRole(updated: { name: string; description: string }) {
-    if (!selectedRole) return;
-    
-    // Update users with the new role name if the role name changed
-    if (updated.name !== selectedRole.name) {
-      setUsers(users.map(user => 
-        user.role === selectedRole.name 
-          ? { ...user, role: updated.name } 
-          : user
-      ));
-    }
-    
-    setRoles(roles.map(r => r.name === selectedRole.name ? { ...r, ...updated } : r));
-    setEditDialogOpen(false);
+  const handleDeleteRole = () => {
+    // Handle role deletion
+    setShowDeleteDialog(false);
     setSelectedRole(null);
-  }
+  };
 
-  function handleDeleteFromEdit() {
-    if (selectedRole) {
-      // Update users to remove this role
-      setUsers(users.map(user => 
-        user.role === selectedRole.name 
-          ? { ...user, role: "No Role" } 
-          : user
-      ));
-      setRoles(roles.filter(r => r.name !== selectedRole.name));
-      setEditDialogOpen(false);
-      setSelectedRole(null);
-    }
-  }
+  const handleSaveRole = (updatedRole: { name: string; description: string }) => {
+    // Handle role update
+    setShowEditDialog(false);
+    setSelectedRole(null);
+  };
 
   return (
     <AdminLayout>
-      <div className="flex flex-col gap-6">
-        <div>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold">Roles & Permissions</h1>
+          <Button onClick={() => setShowEditDialog(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Role
+          </Button>
         </div>
-        <div className="flex border-b mb-2">
-          <button
-            className={`px-4 py-2 -mb-px border-b-2 font-medium text-sm focus:outline-none ${
-              tab === "roles"
-                ? "border-blue-600 text-blue-600"
-                : "border-transparent text-gray-500 hover:text-blue-600"
-            }`}
-            onClick={() => setTab("roles")}
-          >
-            Roles
-          </button>
-          <button
-            className={`px-4 py-2 -mb-px border-b-2 font-medium text-sm focus:outline-none ${
-              tab === "default"
-                ? "border-blue-600 text-blue-600"
-                : "border-transparent text-gray-500 hover:text-blue-600"
-            }`}
-            onClick={() => setTab("default")}
-          >
-            Default Permissions
-          </button>
+
+        <div className="flex items-center gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+            <Input
+              placeholder="Search roles..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
         </div>
-        {tab === "roles" && (
-          <Card>
-            <CardHeader className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Role Management</CardTitle>
-                  <CardDescription>
-                    Manage user roles and permissions across the platform
-                  </CardDescription>
+
+        <div className="rounded-md border">
+          <div className="grid grid-cols-12 gap-4 p-4 text-sm font-medium text-gray-500">
+            <div className="col-span-6">Role Name</div>
+            <div className="col-span-4">Users</div>
+            <div className="col-span-2">Actions</div>
+          </div>
+          <div className="divide-y">
+            {filteredRoles.map((role) => (
+              <div key={role.name} className="grid grid-cols-12 gap-4 p-4 text-sm">
+                <div className="col-span-6 flex items-center">
+                  <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${role.color}`}>
+                    {role.name}
+                  </span>
                 </div>
-                <AddRoleDialog open={open} setOpen={setOpen} roles={roles} onAddRole={handleAddRole} />
-              </div>
-              <div className="flex flex-col gap-4 md:flex-row md:items-center">
-                <div className="relative flex-1">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="search"
-                    placeholder="Search roles..."
-                    className="pl-8"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
+                <div className="col-span-4 flex items-center text-gray-500">
+                  {role.users} users
+                </div>
+                <div className="col-span-2 flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setSelectedRole(role);
+                      setShowEditDialog(true);
+                    }}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setSelectedRole(role);
+                      setShowDeleteDialog(true);
+                    }}
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
-            </CardHeader>
-            <CardContent>
-              <DataTable columns={roleColumns({
-                onDelete: handleDeleteRole,
-                onEdit: handleEditRole,
-              })} data={filteredRoles} />
-            </CardContent>
-          </Card>
-        )}
-        {tab === "default" && (
-          <DefaultPermissions />
-        )}
-        <ConfirmDialog
-          open={deleteDialogOpen}
-          setOpen={setDeleteDialogOpen}
-          title="Delete Role"
-          description={`Are you sure you want to delete the role "${roleToDelete}"? This action cannot be undone.`}
-          onConfirm={confirmDeleteRole}
-          confirmText="Delete"
-          cancelText="Cancel"
-        />
-        <EditRoleDialog
-          open={editDialogOpen}
-          setOpen={setEditDialogOpen}
-          role={selectedRole}
-          onSave={handleSaveRole}
-          onDelete={handleDeleteFromEdit}
-          usersWithRole={selectedRole ? getUsersWithRole(selectedRole.name) : []}
-        />
+            ))}
+          </div>
+        </div>
       </div>
+
+      <EditRoleDialog
+        open={showEditDialog}
+        setOpen={setShowEditDialog}
+        role={selectedRole}
+        onSave={handleSaveRole}
+        onDelete={handleDeleteRole}
+        usersWithRole={selectedRole ? usersData.filter(user => user.role === selectedRole.name) : []}
+      />
+
+      <ConfirmDialog
+        open={showDeleteDialog}
+        setOpen={setShowDeleteDialog}
+        title="Delete Role"
+        description="Are you sure you want to delete this role? This action cannot be undone."
+        onConfirm={handleDeleteRole}
+      />
     </AdminLayout>
   );
 }
