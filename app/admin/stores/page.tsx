@@ -32,6 +32,28 @@ export default function StoresPage() {
     setIntegrationFilter("all-integration");
   };
 
+  const filteredStores = stores.filter(store => {
+    // Search filter
+    const matchesSearch = 
+      store.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (store.description?.toLowerCase() || "").includes(searchQuery.toLowerCase());
+
+    // Status filter
+    const matchesStatus = 
+      statusFilter === "all-status" ||
+      (statusFilter === "active" && store.is_active) ||
+      (statusFilter === "inactive" && !store.is_active);
+
+    // Integration filter
+    const matchesIntegration = 
+      integrationFilter === "all-integration" ||
+      (integrationFilter === "tfm" && store.integration_type === "tfm") ||
+      (integrationFilter === "sticky" && store.integration_type === "sticky") ||
+      (integrationFilter === "both" && store.integration_type === "both");
+
+    return matchesSearch && matchesStatus && matchesIntegration;
+  });
+
   return (
     <AdminLayout>
       <div className="flex flex-col gap-6">
@@ -102,7 +124,7 @@ export default function StoresPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <DataTable columns={storeColumns} data={stores} />
+            <DataTable columns={storeColumns} data={filteredStores} />
           </CardContent>
         </Card>
       </div>
