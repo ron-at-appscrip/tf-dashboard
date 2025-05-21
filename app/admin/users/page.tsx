@@ -44,7 +44,7 @@ export default function UsersPage() {
   }, [usersPerPage]);
 
   const handleAddUser = (newUser: User) => {
-    setUsers(prev => [...prev, newUser]);
+    setUsers(prev => [newUser, ...prev]);
   };
 
   const handleDeleteUser = () => {
@@ -124,9 +124,7 @@ export default function UsersPage() {
                     >
                       <Trash className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
+                    
                   </div>
                 </div>
               </div>
