@@ -1,4 +1,4 @@
-import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { AdminLayout } from "@/components/layout/admin-layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,7 +9,7 @@ import { products } from "@/data/products";
 
 export default function ProductsPage() {
   return (
-    <DashboardLayout>
+    <AdminLayout>
       <div className="flex flex-col gap-6">
         <div>
           <h1 className="text-3xl font-bold">Products</h1>
@@ -45,6 +45,6 @@ export default function ProductsPage() {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
+    </AdminLayout>
   );
 }

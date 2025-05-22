@@ -57,12 +57,7 @@ export default function StoresPage() {
   return (
     <AdminLayout>
       <div className="flex flex-col gap-6">
-        <div>
-          <h1 className="text-3xl font-bold">Stores Management</h1>
-          <p className="text-muted-foreground">
-            View and manage all stores connected to TFM Marketplace and Sticky.io
-          </p>
-        </div>
+        
 
         <Card>
           <CardHeader className="space-y-6">

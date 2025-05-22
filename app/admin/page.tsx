@@ -1,9 +1,9 @@
-import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { AdminLayout } from "@/components/layout/admin-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function AdminDashboardPage() {
   return (
-    <DashboardLayout>
+    <AdminLayout>
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
@@ -108,6 +108,6 @@ export default function AdminDashboardPage() {
           </Card>
         </div>
       </div>
-    </DashboardLayout>
+    </AdminLayout>
   );
 }

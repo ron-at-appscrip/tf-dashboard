@@ -51,11 +51,13 @@ export function EditRoleDialog({ open, setOpen, role, onSave, onDelete, usersWit
     );
   }
 
+  const isEditMode = !!role;
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Edit Role: {role?.name}</DialogTitle>
+          <DialogTitle>{isEditMode ? `Edit Role: ${role?.name}` : "Add New Role"}</DialogTitle>
         </DialogHeader>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-4">
@@ -75,37 +77,41 @@ export function EditRoleDialog({ open, setOpen, role, onSave, onDelete, usersWit
                 placeholder="Description"
               />
             </div>
-            <div>
-              <div className="font-medium mb-1">Users with this role</div>
-              <div className="text-xs text-muted-foreground mb-2">{usersWithRole.length} users currently have this role</div>
-              <div className="space-y-2">
-                {usersWithRole.slice(0, showAllUsers ? undefined : 3).map(user => (
-                  <div key={user.email} className="flex items-center gap-2 bg-muted rounded px-2 py-1">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-bold">
-                      {user.initials}
+            
+            {isEditMode && (
+              <>
+                <div className="font-medium mb-1">Users with this role</div>
+                <div className="text-xs text-muted-foreground mb-2">{usersWithRole.length} users currently have this role</div>
+                <div className="space-y-2">
+                  {usersWithRole.slice(0, showAllUsers ? undefined : 3).map(user => (
+                    <div key={user.email} className="flex items-center gap-2 bg-muted rounded px-2 py-1">
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-bold">
+                        {user.initials}
+                      </div>
+                      <div>
+                        <div className="font-medium text-sm">{user.name}</div>
+                        <div className="text-xs text-muted-foreground">{user.email}</div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="font-medium text-sm">{user.name}</div>
-                      <div className="text-xs text-muted-foreground">{user.email}</div>
+                  ))}
+                  {usersWithRole.length > 3 && (
+                    <div 
+                      className="text-xs text-blue-600 cursor-pointer hover:text-blue-700"
+                      onClick={() => setShowAllUsers(!showAllUsers)}
+                    >
+                      {showAllUsers ? "Show Less" : "View All"}
                     </div>
-                  </div>
-                ))}
-                {usersWithRole.length > 3 && (
-                  <div 
-                    className="text-xs text-blue-600 cursor-pointer hover:text-blue-700"
-                    onClick={() => setShowAllUsers(!showAllUsers)}
-                  >
-                    {showAllUsers ? "Show Less" : "View All"}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="mt-4">
-              <Button variant="destructive" className="w-full" onClick={() => setDeleteDialogOpen(true)}>
-                Delete Role
-              </Button>
-            </div>
+                  )}
+                </div>
+                <div className="mt-4">
+                  <Button variant="destructive" className="w-full" onClick={() => setDeleteDialogOpen(true)}>
+                    Delete Role
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
+          
           <div>
             {/* Permissions section with accordions and toggles */}
             <div className="mb-4">
@@ -136,17 +142,22 @@ export function EditRoleDialog({ open, setOpen, role, onSave, onDelete, usersWit
         </div>
         <DialogFooter className="mt-4">
           <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-          <Button onClick={() => onSave(editRole)}>Save Changes</Button>
+          <Button onClick={() => onSave(editRole)}>
+            {isEditMode ? "Save Changes" : "Add Role"}
+          </Button>
         </DialogFooter>
-        <ConfirmDialog
-          open={deleteDialogOpen}
-          setOpen={setDeleteDialogOpen}
-          title="Delete Role"
-          description="Are you sure you want to delete this role? This action cannot be undone."
-          onConfirm={onDelete}
-          confirmText="Delete"
-          cancelText="Cancel"
-        />
+        
+        {isEditMode && (
+          <ConfirmDialog
+            open={deleteDialogOpen}
+            setOpen={setDeleteDialogOpen}
+            title="Delete Role"
+            description="Are you sure you want to delete this role? This action cannot be undone."
+            onConfirm={onDelete}
+            confirmText="Delete"
+            cancelText="Cancel"
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

@@ -44,11 +44,14 @@ export function LoginForm() {
       await new Promise(resolve => setTimeout(resolve, 1000));
       setEmailSent(true);
       
-      // Simulate successful login after 2 seconds
+      // Simulate successful login after 3 seconds
       setTimeout(() => {
         setIsLoggedIn(true);
-        router.push("/store-selection");
-      }, 2000);
+        // Redirect after showing success message
+        setTimeout(() => {
+          router.push("/store-selection");
+        }, 1500);
+      }, 3000);
     } catch (error) {
       console.error("Error sending magic link:", error);
     } finally {
@@ -92,10 +95,13 @@ export function LoginForm() {
             variant="ghost"
             onClick={() => {
               setIsLoggedIn(true);
-              router.push("/store-selection");
+              setTimeout(() => {
+                router.push("/store-selection");
+              }, 1500);
             }}
             className="text-sm text-blue-600 hover:text-blue-700"
           >
+            Skip simulation
           </Button>
         </div>
       </div>

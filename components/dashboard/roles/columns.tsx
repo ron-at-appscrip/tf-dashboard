@@ -1,32 +1,30 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Pencil, Trash, User, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Edit, Trash } from "lucide-react";
 
-export type Role = {
+export interface Role {
   name: string;
   description: string;
   users: number;
-};
-
-interface RoleActionsProps {
-  onDelete: (roleName: string) => void;
-  onEdit: (roleName: string) => void;
+  color: string;
 }
 
-export const roleColumns = (actions: RoleActionsProps): ColumnDef<Role>[] => [
+interface RoleActionsProps {
+  onEdit: (role: Role) => void;
+  onDelete: (role: Role) => void;
+}
+
+export const roleColumns = ({ onEdit, onDelete }: RoleActionsProps): ColumnDef<Role>[] => [
   {
     accessorKey: "name",
     header: "Role Name",
+    cell: ({ row }) => (
+      <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${row.original.color}`}>
+        {row.original.name}
+      </span>
+    ),
   },
   {
     accessorKey: "description",
@@ -35,28 +33,27 @@ export const roleColumns = (actions: RoleActionsProps): ColumnDef<Role>[] => [
   {
     accessorKey: "users",
     header: "Users",
-    cell: ({ row }) => (
-      <span className="flex items-center gap-1">
-        <User className="inline mr-1 text-gray-400 w-4 h-4" />
-        {row.getValue("users")}
-      </span>
-    ),
+    cell: ({ row }) => `${row.original.users} users`,
   },
   {
     id: "actions",
-    header: () => <div className="flex justify-center">Actions</div>,
-    cell: ({ row }) => {
-      const role = row.original;
-      return (
-        <div className="flex gap-3 justify-center items-center">
-          <Button variant="ghost" size="icon" title="Edit" onClick={() => actions.onEdit(role.name)}>
-            <Pencil className="w-4 h-4" />
-          </Button>
-          <Button variant="ghost" size="icon" title="Delete" onClick={() => actions.onDelete(role.name)}>
-            <Trash className="w-4 h-4 text-red-600" />
-          </Button>
-        </div>
-      );
-    },
+    cell: ({ row }) => (
+      <div className="flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => onEdit(row.original)}
+        >
+          <Edit className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => onDelete(row.original)}
+        >
+          <Trash className="h-4 w-4" />
+        </Button>
+      </div>
+    ),
   },
 ]; 

@@ -1,4 +1,4 @@
-import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { AdminLayout } from "@/components/layout/admin-layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,7 +9,7 @@ import { upsells } from "@/data/upsells";
 
 export default function UpsellsPage() {
   return (
-    <DashboardLayout>
+    <AdminLayout>
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between">
           <div>
@@ -48,6 +48,6 @@ export default function UpsellsPage() {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
+    </AdminLayout>
   );
 }
