@@ -15,6 +15,7 @@ import {
   Search,
   Bell,
   LogOut,
+  UserCog
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -57,7 +58,7 @@ const navItems: NavItem[] = [
   {
     title: "Roles",
     href: "/admin/roles",
-    icon: <Users className="h-5 w-5" />,
+    icon: <UserCog className="h-5 w-5" />,
   },
   {
     title: "Audit Logs",

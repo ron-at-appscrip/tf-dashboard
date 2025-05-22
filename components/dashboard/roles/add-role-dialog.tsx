@@ -39,6 +39,7 @@ export function AddRoleDialog({ open, setOpen, roles, onAddRole }: AddRoleDialog
       name: newRole.name,
       description: newRole.description,
       users: 0,
+      color: "bg-gray-100 text-gray-700" // Default color for new roles
     });
     setOpen(false);
     setNewRole({ name: "", description: "", clone: "" });
