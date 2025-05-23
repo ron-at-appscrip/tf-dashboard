@@ -1,4 +1,7 @@
 import { Product } from "@/types/product";
+import { SyncProductsModal } from "@/components/products/SyncProductsModal";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export const products: Product[] = [
   {

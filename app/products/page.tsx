@@ -16,6 +16,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { SyncProductsModal } from "@/components/products/SyncProductsModal";
 
 const PAGE_SIZE_OPTIONS = [4, 8, 12, 24];
 const SOURCE_OPTIONS = [
@@ -38,6 +39,7 @@ export default function ProductsPage() {
   const [sourceFilter, setSourceFilter] = useState("all");
   const [productFilter, setProductFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [syncModalOpen, setSyncModalOpen] = useState(false);
 
   // Filtering logic (customize as needed for your data)
   let filteredProducts = allProducts;
@@ -121,7 +123,7 @@ export default function ProductsPage() {
           <div className="flex gap-2">
             <Button variant="outline">Analytics</Button>
             <Button variant="outline">Export</Button>
-            <Button>Sync Products</Button>
+            <Button onClick={() => setSyncModalOpen(true)}>Sync Products</Button>
           </div>
         </div>
 
@@ -237,6 +239,7 @@ export default function ProductsPage() {
           </Pagination>
         </div>
       </div>
+      <SyncProductsModal open={syncModalOpen} onOpenChange={setSyncModalOpen} />
     </AdminLayout>
   );
 } 
