@@ -17,8 +17,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState } from "react";
+import { StoreProvider } from "@/contexts/store-context";
 
-export default function StoresPage() {
+function StoresPageInner() {
   const { stores } = useStores();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all-status");
@@ -124,5 +125,13 @@ export default function StoresPage() {
         </Card>
       </div>
     </AdminLayout>
+  );
+}
+
+export default function StoresPage() {
+  return (
+    <StoreProvider>
+      <StoresPageInner />
+    </StoreProvider>
   );
 }

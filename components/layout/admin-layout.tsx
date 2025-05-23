@@ -15,7 +15,13 @@ import {
   Search,
   Bell,
   LogOut,
-  UserCog
+  UserCog,
+  ShoppingBag,
+  FileText,
+  Megaphone,
+  BarChart3,
+  HelpCircle,
+  BookOpen
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -23,6 +29,7 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ModeToggle } from "@/components/mode-toggle";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { useStore } from "@/lib/store-context";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,11 +42,12 @@ import { LogoutDialog } from "@/components/auth/logout-dialog";
 
 interface NavItem {
   title: string;
-  href: string;
-  icon: React.ReactNode;
+  href?: string;
+  icon?: React.ReactNode;
+  children?: NavItem[];
 }
 
-const navItems: NavItem[] = [
+const adminNavItems: NavItem[] = [
   {
     title: "Dashboard",
     href: "/admin",
@@ -72,6 +80,37 @@ const navItems: NavItem[] = [
   },
 ];
 
+const storeNavItems: NavItem[] = [
+  { title: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
+  {
+    title: "Products",
+    icon: <Box className="h-5 w-5" />,
+    children: [
+      { title: "All Products", href: "/products" },
+      { title: "Categories", href: "/categories" },
+      { title: "Bundle Builder", href: "/bundle-builder" },
+    ],
+  },
+  {
+    title: "Orders",
+    icon: <ShoppingBag className="h-5 w-5" />,
+    children: [
+      { title: "All Orders", href: "/orders" },
+      { title: "Draft Orders", href: "/orders/draft" },
+      { title: "Submitted Orders", href: "/orders/submitted" },
+      { title: "Abandoned Carts", href: "/orders/abandoned" },
+    ],
+  },
+  { title: "Customers", href: "/customers", icon: <Users className="h-5 w-5" /> },
+  { title: "Page Builder", href: "/page-builder", icon: <FileText className="h-5 w-5" /> },
+  { title: "Campaign Manager", href: "/campaign-manager", icon: <Megaphone className="h-5 w-5" /> },
+  { title: "Analytics", href: "/analytics", icon: <BarChart3 className="h-5 w-5" /> },
+  { title: "Users & Roles", href: "/users", icon: <UserCog className="h-5 w-5" /> },
+  { title: "Support", href: "/support", icon: <HelpCircle className="h-5 w-5" /> },
+  { title: "Store Settings", href: "/settings", icon: <Settings className="h-5 w-5" /> },
+  { title: "Help & Resources", href: "/help", icon: <BookOpen className="h-5 w-5" /> },
+];
+
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
@@ -80,6 +119,16 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const { currentStore } = useStore();
+
+  const navItems = currentStore?.isSuperAdmin ? adminNavItems : storeNavItems;
+
+  // Accordion state: track open/close for each parent by title
+  const [openAccordions, setOpenAccordions] = useState<{ [key: string]: boolean }>({});
+
+  const handleAccordionToggle = (title: string) => {
+    setOpenAccordions((prev) => ({ ...prev, [title]: !prev[title] }));
+  };
 
   return (
     <div className="flex min-h-screen">
@@ -95,7 +144,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             isCollapsed ? "opacity-0 w-0" : "opacity-100 w-auto"
           )}>
             <Box className="h-6 w-6" />
-            <span className="text-lg font-semibold whitespace-nowrap">TF-TFM</span>
+            <span className="text-lg font-semibold whitespace-nowrap">
+              {currentStore?.isSuperAdmin ? "Super Admin" : currentStore?.name || "TF-TFM"}
+            </span>
           </div>
           <Button
             variant="ghost"
@@ -110,26 +161,78 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             )}
           </Button>
         </div>
+       
         <nav className="p-4">
           <ul className="space-y-1">
             {navItems.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className={cn(
-                    "flex items-center rounded-md py-2 text-sm hover:bg-gray-700 transition-all duration-300",
-                    pathname === item.href && "bg-gray-700",
-                    isCollapsed ? "px-2 justify-center" : "px-3"
-                  )}
-                >
-                  {item.icon}
-                  <span className={cn(
-                    "ml-3 transition-all duration-300 overflow-hidden whitespace-nowrap",
-                    isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"
-                  )}>
-                    {item.title}
-                  </span>
-                </Link>
+              <li key={item.title}>
+                {item.children ? (
+                  <>
+                    <div
+                      className={cn(
+                        "flex items-center rounded-md py-2 text-sm hover:bg-gray-700 transition-all duration-300 cursor-pointer select-none",
+                        isCollapsed ? "px-2 justify-center" : "px-3"
+                      )}
+                      onClick={() => handleAccordionToggle(item.title)}
+                    >
+                      {item.icon}
+                      {!isCollapsed && (
+                        <>
+                          <span className="ml-3 transition-all duration-300 overflow-hidden whitespace-nowrap">
+                            {item.title}
+                          </span>
+                          <ChevronRight
+                            className={cn(
+                              "ml-auto h-4 w-4 transition-transform duration-200",
+                              openAccordions[item.title] ? "rotate-90" : "rotate-0"
+                            )}
+                          />
+                        </>
+                      )}
+                    </div>
+                    {openAccordions[item.title] && !isCollapsed && (
+                      <ul className="ml-8 space-y-1">
+                        {item.children.map((child) => (
+                          <li key={child.title}>
+                            <Link
+                              href={child.href!}
+                              className={cn(
+                                "flex items-center rounded-md py-2 text-sm hover:bg-gray-700 transition-all duration-300",
+                                pathname === child.href && "bg-gray-700",
+                                isCollapsed ? "px-2 justify-center" : "px-3"
+                              )}
+                            >
+                              <span
+                                className={cn(
+                                  "transition-all duration-300 overflow-hidden whitespace-nowrap",
+                                  isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"
+                                )}
+                              >
+                                {child.title}
+                              </span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </>
+                ) : (
+                  <Link
+                    href={item.href!}
+                    className={cn(
+                      "flex items-center rounded-md py-2 text-sm hover:bg-gray-700 transition-all duration-300",
+                      pathname === item.href && "bg-gray-700",
+                      isCollapsed ? "px-2 justify-center" : "px-3"
+                    )}
+                  >
+                    {item.icon}
+                    {!isCollapsed && (
+                      <span className="ml-3 transition-all duration-300 overflow-hidden whitespace-nowrap">
+                        {item.title}
+                      </span>
+                    )}
+                  </Link>
+                )}
               </li>
             ))}
           </ul>
@@ -140,15 +243,14 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             isCollapsed ? "justify-center" : "space-x-3"
           )}>
             <Avatar>
-              <AvatarFallback>SA</AvatarFallback>
+              <AvatarFallback>{currentStore?.name.slice(0, 2).toUpperCase() || "SA"}</AvatarFallback>
             </Avatar>
-            <div className={cn(
-              "transition-all duration-300 overflow-hidden whitespace-nowrap",
-              isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"
-            )}>
-              <p className="text-sm font-medium">Super Admin</p>
-              <p className="text-xs text-gray-400">System Administrator</p>
-            </div>
+            {!isCollapsed && (
+              <div className="transition-all duration-300 overflow-hidden whitespace-nowrap">
+                <p className="text-sm font-medium">{currentStore?.name || "Super Admin"}</p>
+                <p className="text-xs text-gray-400">{currentStore?.isSuperAdmin ? "System Administrator" : "Store Manager"}</p>
+              </div>
+            )}
           </div>
         </div>
       </aside>

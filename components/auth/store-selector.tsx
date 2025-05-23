@@ -1,11 +1,22 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Home, Leaf, ShoppingBag, ChevronRight, Loader2 } from "lucide-react";
+import { Home, Leaf, ShoppingBag, ChevronRight, Loader2, UserCog } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useState } from "react";
+import { useStore } from "@/lib/store-context";
 
 const stores = [
+  {
+    id: "superadmin",
+    name: "Superadmin",
+    description: "Superadmin",
+    icon: UserCog,
+    href: "/dashboard",
+    iconBg: "bg-blue-50",
+    iconColor: "text-blue-500",
+    isSuperAdmin: true,
+  },
   {
     id: "trulyfreehome",
     name: "Trulyfreehome",
@@ -14,6 +25,7 @@ const stores = [
     href: "/dashboard",
     iconBg: "bg-blue-50",
     iconColor: "text-blue-500",
+    isSuperAdmin: false,
   },
   {
     id: "truself",
@@ -23,6 +35,7 @@ const stores = [
     href: "/dashboard",
     iconBg: "bg-green-50",
     iconColor: "text-green-500",
+    isSuperAdmin: false,
   },
   {
     id: "marketplace",
@@ -33,17 +46,25 @@ const stores = [
     href: "/dashboard",
     iconBg: "bg-gray-100",
     iconColor: "text-gray-400",
+    isSuperAdmin: false,
   },
 ];
 
 export function StoreSelector() {
   const router = useRouter();
   const [loadingStore, setLoadingStore] = useState<string | null>(null);
+  const { setCurrentStore } = useStore();
 
   const handleStoreSelect = (store: typeof stores[0]) => {
     if (store.disabled) return;
     
     setLoadingStore(store.id);
+    setCurrentStore({
+      id: store.id,
+      name: store.name,
+      description: store.description,
+      isSuperAdmin: store.isSuperAdmin,
+    });
     router.push(store.href);
   };
 

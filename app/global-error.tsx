@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, ArrowLeft } from "lucide-react";
+import { useStore } from "@/lib/store-context";
 
 export default function GlobalError({
   error,
@@ -12,10 +14,22 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const router = useRouter();
+  const { currentStore } = useStore();
+  const isAuthenticated = !!currentStore;
+
   useEffect(() => {
     // Log the error to an error reporting service
     console.error(error);
   }, [error]);
+
+  const handleReturn = () => {
+    if (window.history.length > 2) {
+      router.back();
+    } else {
+      router.push(isAuthenticated ? "/dashboard" : "/login");
+    }
+  };
 
   return (
     <html>
@@ -28,9 +42,15 @@ export default function GlobalError({
               A critical error occurred in the application. Please try refreshing the page.
             </p>
             <div className="flex gap-4">
+              <Button variant="outline" onClick={handleReturn}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Go Back
+              </Button>
               <Button onClick={() => reset()}>Try again</Button>
               <Button variant="outline" asChild>
-                <Link href="/">Return Home</Link>
+                <Link href={isAuthenticated ? "/dashboard" : "/login"}>
+                  {isAuthenticated ? "Go to Dashboard" : "Go to Login"}
+                </Link>
               </Button>
             </div>
           </div>

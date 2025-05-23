@@ -143,24 +143,7 @@ export function AddUserDialog({ open, setOpen, onAddUser, roles = defaultRoles, 
               </div>
             )}
           </div>
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="block text-sm font-medium">Password</label>
-              <span className="text-xs text-muted-foreground">Auto-generated</span>
-            </div>
-            <div className="relative">
-              <Input type={showPassword ? "text" : "password"} value={password} readOnly />
-              <button
-                type="button"
-                className="absolute right-2 top-[0.7em] text-gray-400 hover:text-gray-700"
-                onClick={() => setShowPassword(v => !v)}
-                tabIndex={-1}
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
-            <div className="text-xs text-muted-foreground mt-1">A secure password will be generated and sent to the user&apos;s email</div>
-          </div>
+          
           <DialogFooter className="mt-2">
             <DialogClose asChild>
               <Button variant="outline" type="button">Cancel</Button>

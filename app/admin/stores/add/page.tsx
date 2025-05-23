@@ -32,6 +32,7 @@ import { ChevronLeft, Info, Upload, X } from "lucide-react";
 import { stores } from "@/data/stores";
 import { Store } from "@/types/store";
 import { useStores } from "@/contexts/store-context";
+import { StoreProvider } from "@/contexts/store-context";
 
 const formSchema = z.object({
   name: z.string().min(2, "Store name must be at least 2 characters"),
@@ -69,7 +70,7 @@ const formSchema = z.object({
   path: ["sticky_account_id"]
 });
 
-export default function AddStorePage() {
+function AddStorePageInner() {
   const router = useRouter();
   const { addStore } = useStores();
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
@@ -507,5 +508,13 @@ export default function AddStorePage() {
         </Card>
       </div>
     </AdminLayout>
+  );
+}
+
+export default function AddStorePage() {
+  return (
+    <StoreProvider>
+      <AddStorePageInner />
+    </StoreProvider>
   );
 }

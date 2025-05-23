@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { CheckCircle, Mail, Loader2, LogIn } from "lucide-react";
+import { CheckCircle, Mail, Loader2, LogIn, Home, Lock } from "lucide-react";
 import { useState } from "react";
 
 const formSchema = z.object({
@@ -91,57 +91,62 @@ export function LoginForm() {
           >
             Use a different email
           </Button>
-          <Button
-            variant="ghost"
-            onClick={() => {
-              setIsLoggedIn(true);
-              setTimeout(() => {
-                router.push("/store-selection");
-              }, 1500);
-            }}
-            className="text-sm text-blue-600 hover:text-blue-700"
-          >
-            Skip simulation
-          </Button>
+        
         </div>
       </div>
     );
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="your@email.com" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button 
-          type="submit" 
-          className="w-full bg-blue-600 hover:bg-blue-700"
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Sending magic link...
-            </>
-          ) : (
-            <>
-              <Mail className="mr-2 h-4 w-4" />
-              Send magic link
-            </>
-          )}
-        </Button>
-      </form>
-    </Form>
+    <div className="flex flex-col items-center">
+      <div className="bg-green-500 rounded-xl p-4 mb-4 flex items-center justify-center">
+        <Home className="text-white w-8 h-8" />
+      </div>
+      <h1 className="text-2xl font-bold text-green-700 mb-1">TrulyFree</h1>
+      <p className="text-gray-500 mb-6 text-center">Store Manager</p>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-80">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-gray-700 text-sm mb-2">Email Address</FormLabel>
+                <FormControl>
+                  <Input placeholder="your@email.com" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button 
+            type="submit" 
+            className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-lg transition"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Sending magic link...
+              </>
+            ) : (
+              <>
+                <Home className="w-5 h-5" />
+                Send Magic Link
+              </>
+            )}
+          </Button>
+        </form>
+      </Form>
+      <div className="w-full bg-green-50 border border-green-200 rounded-lg p-3 flex items-start gap-2 mt-4">
+        <Lock className="text-yellow-500 w-5 h-5 mt-0.5" />
+        <div>
+          <span className="font-semibold text-sm text-gray-700">Secure Login:</span>
+          <span className="text-sm text-gray-600 ml-1">
+            We&apos;ll send you a secure magic link to access your store manager dashboard.
+          </span>
+        </div>
+      </div>
+    </div>
   );
 }

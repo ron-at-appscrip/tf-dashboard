@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { StoreProvider } from "@/contexts/store-context";
 import StoreDetails from "./store-details";
 import { stores as initialStores } from "@/data/stores";
 
@@ -12,5 +13,9 @@ export async function generateStaticParams() {
 }
 
 export default function StoreDetailsPage() {
-  return <StoreDetails />;
+  return (
+    <StoreProvider>
+      <StoreDetails />
+    </StoreProvider>
+  );
 }
