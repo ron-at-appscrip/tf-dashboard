@@ -8,12 +8,13 @@ interface Bundle {
 
 interface ProductBundlesProps {
   bundles: Bundle[];
+  title?: string;
 }
 
-export function ProductBundles({ bundles }: ProductBundlesProps) {
+export function ProductBundles({ bundles , title}: ProductBundlesProps) {
   return (
     <div className="mb-8">
-      <div className="text-xl font-semibold text-card-foreground mb-4">Used in Bundles</div>
+      <div className="text-xl font-semibold text-card-foreground mb-4">{title}</div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {bundles.map((bundle, i) => (
           <Card key={i} className="p-6 rounded-2xl border-border hover:shadow-md transition-shadow bg-card">

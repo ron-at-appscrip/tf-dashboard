@@ -94,7 +94,7 @@ const getStoreNavItems = (t: (key: string) => string): NavItem[] => [
     children: [
       { title: t('admin.layout.navigation.products.allProducts'), href: "/products" },
       { title: t('admin.layout.navigation.products.categories'), href: "/categories" },
-      { title: t('admin.layout.navigation.products.bundleBuilder'), href: "/bundle-builder" },
+      { title: t('admin.layout.navigation.products.bundleBuilder'), href: "/bundles" },
     ],
   },
   {

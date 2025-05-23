@@ -51,7 +51,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
       </div>
       <ProductShippingInfo />
 
-      <ProductBundles bundles={bundles} />
+      <ProductBundles title="Used in Bundles" bundles={bundles} />
     </div>
   );
 }
