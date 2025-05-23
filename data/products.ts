@@ -10,6 +10,8 @@ export const products: Product[] = [
     status: "in-stock",
     lastUpdated: "2023-09-01",
     description: "Plant-based formula that effectively cleans without harsh chemicals.",
+    source: "sticky",
+    displayCategory: "on sale",
     images: [
       "https://images.pexels.com/photos/4239013/pexels-photo-4239013.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
     ],
@@ -23,6 +25,8 @@ export const products: Product[] = [
     status: "in-stock",
     lastUpdated: "2023-08-28",
     description: "Sustainable bamboo cutting board with juice groove and handle.",
+    source: "tfmnative",
+    displayCategory: "display only",
     images: [
       "https://images.pexels.com/photos/4226876/pexels-photo-4226876.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
     ],
@@ -36,6 +40,8 @@ export const products: Product[] = [
     status: "in-stock",
     lastUpdated: "2023-08-25",
     description: "Set of 5 leak-proof silicone bags for food storage. Dishwasher safe.",
+    source: "others",
+    displayCategory: "on sale",
     images: [
       "https://images.pexels.com/photos/5378703/pexels-photo-5378703.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
     ],
@@ -49,6 +55,8 @@ export const products: Product[] = [
     status: "in-stock",
     lastUpdated: "2023-08-20",
     description: "Reduce drying time and static without chemicals. Lasts for 1000+ loads.",
+    source: "sticky",
+    displayCategory: "others",
     images: [
       "https://images.pexels.com/photos/7262888/pexels-photo-7262888.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
     ],
@@ -62,6 +70,8 @@ export const products: Product[] = [
     status: "low-stock",
     lastUpdated: "2023-08-15",
     description: "1.3-gallon kitchen compost bin with charcoal filter to prevent odors.",
+    source: "tfmnative",
+    displayCategory: "display only",
     images: [
       "https://images.pexels.com/photos/4039864/pexels-photo-4039864.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
     ],
@@ -75,6 +85,8 @@ export const products: Product[] = [
     status: "out-of-stock",
     lastUpdated: "2023-08-10",
     description: "Set of 4 ultra-soft, quick-drying towels made from 100% organic cotton.",
+    source: "others",
+    displayCategory: "on sale",
     images: [
       "https://images.pexels.com/photos/4210341/pexels-photo-4210341.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
     ],
@@ -88,6 +100,8 @@ export const products: Product[] = [
     status: "in-stock",
     lastUpdated: "2023-08-05",
     description: "Plant-based formula that cuts through grease without harming aquatic life.",
+    source: "sticky",
+    displayCategory: "others",
     images: [
       "https://images.pexels.com/photos/5218019/pexels-photo-5218019.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
     ],
@@ -101,6 +115,8 @@ export const products: Product[] = [
     status: "low-stock",
     lastUpdated: "2023-08-01",
     description: "9-watt LED bulbs equivalent to 60-watt incandescent. Lasts up to 15,000 hours.",
+    source: "tfmnative",
+    displayCategory: "display only",
     images: [
       "https://images.pexels.com/photos/3566345/pexels-photo-3566345.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
     ],

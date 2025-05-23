@@ -8,4 +8,6 @@ export interface Product {
   lastUpdated: string;
   description: string;
   images: string[];
+  source: "sticky" | "tfmnative" | "others";
+  displayCategory: "on sale" | "display only" | "others";
 }
