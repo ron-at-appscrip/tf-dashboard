@@ -115,10 +115,10 @@ export default function ProductsPage() {
     <AdminLayout>
       <div className="flex flex-col gap-6">
         {/* Header and actions */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white rounded-xl p-6 shadow">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-background rounded-xl p-6 shadow">
           <div>
-            <h1 className="text-3xl font-bold">Products</h1>
-            <p className="text-gray-500">Manage your product catalog and inventory</p>
+            <h1 className="text-3xl font-bold text-foreground">Products</h1>
+            <p className="text-muted-foreground">Manage your product catalog and inventory</p>
           </div>
           <div className="flex gap-2">
             <Button variant="outline">Analytics</Button>
@@ -128,9 +128,9 @@ export default function ProductsPage() {
         </div>
 
         {/* Search and filters */}
-        <div className="flex flex-col md:flex-row gap-2 items-center bg-white rounded-xl p-4 shadow">
+        <div className="flex flex-col md:flex-row gap-2 items-center bg-background rounded-xl p-4 shadow">
           <div className="relative flex-1 w-full">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
               placeholder="Search products by name, SKU, or description..."
@@ -140,7 +140,7 @@ export default function ProductsPage() {
             />
           </div>
           <select
-            className="border rounded px-3 py-2 text-sm text-gray-700 bg-white"
+            className="border rounded px-3 py-2 text-sm text-foreground bg-background"
             value={sourceFilter}
             onChange={handleSourceFilterChange}
           >
@@ -149,7 +149,7 @@ export default function ProductsPage() {
             ))}
           </select>
           <select
-            className="border rounded px-3 py-2 text-sm text-gray-700 bg-white"
+            className="border rounded px-3 py-2 text-sm text-foreground bg-background"
             value={productFilter}
             onChange={handleProductFilterChange}
           >
@@ -163,11 +163,11 @@ export default function ProductsPage() {
         </div>
 
         {/* Product count, page size, and view toggle */}
-        <div className="flex items-center justify-between bg-white rounded-xl p-3 shadow">
+        <div className="flex items-center justify-between bg-background rounded-xl p-3 shadow">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">Showing {paginatedProducts.length} of {totalProducts} products</span>
+            <span className="text-sm text-muted-foreground">Showing {paginatedProducts.length} of {totalProducts} products</span>
             <select
-              className="border rounded px-2 py-1 text-sm text-gray-700 bg-white ml-2"
+              className="border rounded px-2 py-1 text-sm text-foreground bg-background ml-2"
               value={pageSize}
               onChange={handlePageSizeChange}
             >

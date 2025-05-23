@@ -32,8 +32,8 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
   ];
 
   return (
-    <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-      <Link href="/products" className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 transition-colors mb-6">
+    <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 bg-background">
+      <Link href="/products" className="inline-flex items-center text-sm text-primary hover:text-primary/80 transition-colors mb-6">
         <ArrowLeft className="w-4 h-4 mr-2" />
         Back to Products
       </Link>

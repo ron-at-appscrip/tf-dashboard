@@ -9,11 +9,11 @@ interface ProductHeaderProps {
 
 export function ProductHeader({ product }: ProductHeaderProps) {
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
+    <div className="bg-card rounded-2xl shadow-sm border border-border p-8 mb-8">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
-          <div className="text-gray-500 text-sm mb-3">SKU: {product.id}</div>
+          <h1 className="text-3xl font-bold text-card-foreground mb-2">{product.name}</h1>
+          <div className="text-muted-foreground text-sm mb-3">SKU: {product.id}</div>
           <div className="flex gap-2">
             <Badge variant="success" className="px-3 py-1">-25% OFF</Badge>
             <Badge variant="outline" className="px-3 py-1">
