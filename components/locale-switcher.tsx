@@ -1,74 +1,36 @@
 "use client";
 
 import * as React from "react";
-import { Check, ChevronsUpDown, Globe } from "lucide-react";
-
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useLanguage } from "@/contexts/language-context";
+import { Language } from "@/lib/translations";
 
-const languages = [
+const languages: { value: Language; label: string }[] = [
   { value: "en", label: "English" },
   { value: "es", label: "Español" },
-  { value: "fr", label: "Français" },
-  { value: "de", label: "Deutsch" },
 ];
 
 export function LocaleSwitcher() {
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("en");
+  const { language, setLanguage } = useLanguage();
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-[180px] justify-between"
-        >
-          <Globe className="mr-2 h-4 w-4" />
-          {value ? languages.find((language) => language.value === value)?.label : "Select language"}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[180px] p-0">
-        <Command>
-          <CommandInput placeholder="Search language..." />
-          <CommandEmpty>No language found.</CommandEmpty>
-          <CommandGroup>
-            {languages.map((language) => (
-              <CommandItem
-                key={language.value}
-                value={language.value}
-                onSelect={(currentValue) => {
-                  setValue(currentValue === value ? "" : currentValue);
-                  setOpen(false);
-                }}
-              >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    value === language.value ? "opacity-100" : "opacity-0"
-                  )}
-                />
-                {language.label}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        </Command>
-      </PopoverContent>
-    </Popover>
+    <Select value={language} onValueChange={(value: Language) => setLanguage(value)}>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select language" />
+      </SelectTrigger>
+      <SelectContent>
+        {languages.map((lang) => (
+          <SelectItem key={lang.value} value={lang.value}>
+            {lang.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }

@@ -5,12 +5,12 @@ import { Home, Leaf, ShoppingBag, ChevronRight, Loader2, UserCog } from "lucide-
 import { Card } from "@/components/ui/card";
 import { useState } from "react";
 import { useStore } from "@/lib/store-context";
+import { useTranslation } from "@/lib/translations";
+import { useLanguage } from "@/contexts/language-context";
 
-const stores = [
+const storeConfigs = [
   {
     id: "superadmin",
-    name: "Superadmin",
-    description: "Superadmin",
     icon: UserCog,
     href: "/dashboard",
     iconBg: "bg-blue-50",
@@ -19,8 +19,6 @@ const stores = [
   },
   {
     id: "trulyfreehome",
-    name: "Trulyfreehome",
-    description: "Home & cleaning products",
     icon: Home,
     href: "/dashboard",
     iconBg: "bg-blue-50",
@@ -29,8 +27,6 @@ const stores = [
   },
   {
     id: "truself",
-    name: "Truself Organics",
-    description: "Organic personal care",
     icon: Leaf,
     href: "/dashboard",
     iconBg: "bg-green-50",
@@ -39,8 +35,6 @@ const stores = [
   },
   {
     id: "marketplace",
-    name: "TF Marketplace",
-    description: "No access permissions",
     icon: ShoppingBag,
     disabled: true,
     href: "/dashboard",
@@ -54,15 +48,17 @@ export function StoreSelector() {
   const router = useRouter();
   const [loadingStore, setLoadingStore] = useState<string | null>(null);
   const { setCurrentStore } = useStore();
+  const { language } = useLanguage();
+  const { t } = useTranslation(language);
 
-  const handleStoreSelect = (store: typeof stores[0]) => {
+  const handleStoreSelect = (store: typeof storeConfigs[0]) => {
     if (store.disabled) return;
     
     setLoadingStore(store.id);
     setCurrentStore({
       id: store.id,
-      name: store.name,
-      description: store.description,
+      name: t(`store.selection.stores.${store.id}.name`),
+      description: t(`store.selection.stores.${store.id}.description`),
       isSuperAdmin: store.isSuperAdmin,
     });
     router.push(store.href);
@@ -70,7 +66,7 @@ export function StoreSelector() {
 
   return (
     <div className="space-y-3">
-      {stores.map((store) => (
+      {storeConfigs.map((store) => (
         <Card
           key={store.id}
           className={`p-4 transition-all ${
@@ -86,9 +82,11 @@ export function StoreSelector() {
                 <store.icon className={`h-5 w-5 ${store.iconColor}`} />
               </div>
               <div>
-                <h3 className="font-medium">{store.name}</h3>
+                <h3 className="font-medium">
+                  {t(`store.selection.stores.${store.id}.name`)}
+                </h3>
                 <p className="text-sm text-gray-500">
-                  {store.description}
+                  {t(`store.selection.stores.${store.id}.description`)}
                 </p>
               </div>
             </div>

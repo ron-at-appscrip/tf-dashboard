@@ -30,6 +30,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ModeToggle } from "@/components/mode-toggle";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { useStore } from "@/lib/store-context";
+import { useTranslation } from "@/lib/translations";
+import { useLanguage } from "@/contexts/language-context";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,68 +49,104 @@ interface NavItem {
   children?: NavItem[];
 }
 
-const adminNavItems: NavItem[] = [
+const getAdminNavItems = (t: (key: string) => string): NavItem[] => [
   {
-    title: "Dashboard",
+    title: t('admin.layout.navigation.dashboard'),
     href: "/admin",
     icon: <LayoutDashboard className="h-5 w-5" />,
   },
   {
-    title: "Stores",
+    title: t('admin.layout.navigation.stores'),
     href: "/admin/stores",
     icon: <Store className="h-5 w-5" />,
   },
   {
-    title: "Users",
+    title: t('admin.layout.navigation.users'),
     href: "/admin/users",
     icon: <Users className="h-5 w-5" />,
   },
   {
-    title: "Roles",
+    title: t('admin.layout.navigation.roles'),
     href: "/admin/roles",
     icon: <UserCog className="h-5 w-5" />,
   },
   {
-    title: "Audit Logs",
+    title: t('admin.layout.navigation.auditLogs'),
     href: "/admin/audit-logs",
     icon: <Activity className="h-5 w-5" />,
   },
   {
-    title: "System Settings",
+    title: t('admin.layout.navigation.systemSettings'),
     href: "/admin/settings",
     icon: <Settings className="h-5 w-5" />,
   },
 ];
 
-const storeNavItems: NavItem[] = [
-  { title: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
+const getStoreNavItems = (t: (key: string) => string): NavItem[] => [
+  { 
+    title: t('admin.layout.navigation.dashboard'), 
+    href: "/dashboard", 
+    icon: <LayoutDashboard className="h-5 w-5" /> 
+  },
   {
-    title: "Products",
+    title: t('admin.layout.navigation.products.title'),
     icon: <Box className="h-5 w-5" />,
     children: [
-      { title: "All Products", href: "/products" },
-      { title: "Categories", href: "/categories" },
-      { title: "Bundle Builder", href: "/bundle-builder" },
+      { title: t('admin.layout.navigation.products.allProducts'), href: "/products" },
+      { title: t('admin.layout.navigation.products.categories'), href: "/categories" },
+      { title: t('admin.layout.navigation.products.bundleBuilder'), href: "/bundle-builder" },
     ],
   },
   {
-    title: "Orders",
+    title: t('admin.layout.navigation.orders.title'),
     icon: <ShoppingBag className="h-5 w-5" />,
     children: [
-      { title: "All Orders", href: "/orders" },
-      { title: "Draft Orders", href: "/orders/draft" },
-      { title: "Submitted Orders", href: "/orders/submitted" },
-      { title: "Abandoned Carts", href: "/orders/abandoned" },
+      { title: t('admin.layout.navigation.orders.allOrders'), href: "/orders" },
+      { title: t('admin.layout.navigation.orders.draftOrders'), href: "/orders/draft" },
+      { title: t('admin.layout.navigation.orders.submittedOrders'), href: "/orders/submitted" },
+      { title: t('admin.layout.navigation.orders.abandonedCarts'), href: "/orders/abandoned" },
     ],
   },
-  { title: "Customers", href: "/customers", icon: <Users className="h-5 w-5" /> },
-  { title: "Page Builder", href: "/page-builder", icon: <FileText className="h-5 w-5" /> },
-  { title: "Campaign Manager", href: "/campaign-manager", icon: <Megaphone className="h-5 w-5" /> },
-  { title: "Analytics", href: "/analytics", icon: <BarChart3 className="h-5 w-5" /> },
-  { title: "Users & Roles", href: "/users", icon: <UserCog className="h-5 w-5" /> },
-  { title: "Support", href: "/support", icon: <HelpCircle className="h-5 w-5" /> },
-  { title: "Store Settings", href: "/settings", icon: <Settings className="h-5 w-5" /> },
-  { title: "Help & Resources", href: "/help", icon: <BookOpen className="h-5 w-5" /> },
+  { 
+    title: t('admin.layout.navigation.customers'), 
+    href: "/customers", 
+    icon: <Users className="h-5 w-5" /> 
+  },
+  { 
+    title: t('admin.layout.navigation.pageBuilder'), 
+    href: "/page-builder", 
+    icon: <FileText className="h-5 w-5" /> 
+  },
+  { 
+    title: t('admin.layout.navigation.campaignManager'), 
+    href: "/campaign-manager", 
+    icon: <Megaphone className="h-5 w-5" /> 
+  },
+  { 
+    title: t('admin.layout.navigation.analytics'), 
+    href: "/analytics", 
+    icon: <BarChart3 className="h-5 w-5" /> 
+  },
+  { 
+    title: t('admin.layout.navigation.usersAndRoles'), 
+    href: "/users", 
+    icon: <UserCog className="h-5 w-5" /> 
+  },
+  { 
+    title: t('admin.layout.navigation.support'), 
+    href: "/support", 
+    icon: <HelpCircle className="h-5 w-5" /> 
+  },
+  { 
+    title: t('admin.layout.navigation.storeSettings'), 
+    href: "/settings", 
+    icon: <Settings className="h-5 w-5" /> 
+  },
+  { 
+    title: t('admin.layout.navigation.helpAndResources'), 
+    href: "/help", 
+    icon: <BookOpen className="h-5 w-5" /> 
+  },
 ];
 
 interface AdminLayoutProps {
@@ -120,8 +158,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const { currentStore } = useStore();
+  const { language } = useLanguage();
+  const { t } = useTranslation(language);
 
-  const navItems = currentStore?.isSuperAdmin ? adminNavItems : storeNavItems;
+  const navItems = currentStore?.isSuperAdmin 
+    ? getAdminNavItems(t) 
+    : getStoreNavItems(t);
 
   // Accordion state: track open/close for each parent by title
   const [openAccordions, setOpenAccordions] = useState<{ [key: string]: boolean }>({});
@@ -145,7 +187,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           )}>
             <Box className="h-6 w-6" />
             <span className="text-lg font-semibold whitespace-nowrap">
-              {currentStore?.isSuperAdmin ? "Super Admin" : currentStore?.name || "TF-TFM"}
+              {currentStore?.isSuperAdmin 
+                ? t('admin.layout.superAdmin') 
+                : currentStore?.name || "TF-TFM"}
             </span>
           </div>
           <Button
@@ -247,8 +291,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             </Avatar>
             {!isCollapsed && (
               <div className="transition-all duration-300 overflow-hidden whitespace-nowrap">
-                <p className="text-sm font-medium">{currentStore?.name || "Super Admin"}</p>
-                <p className="text-xs text-gray-400">{currentStore?.isSuperAdmin ? "System Administrator" : "Store Manager"}</p>
+                <p className="text-sm font-medium">{currentStore?.name || t('admin.layout.superAdmin')}</p>
+                <p className="text-xs text-gray-400">
+                  {currentStore?.isSuperAdmin 
+                    ? t('admin.layout.systemAdministrator') 
+                    : t('admin.layout.storeManager')}
+                </p>
               </div>
             )}
           </div>
@@ -264,7 +312,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search..."
+                placeholder={t('admin.layout.search')}
                 className="pl-9 w-full"
               />
             </div>
@@ -284,7 +332,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">Super Admin</p>
+                    <p className="text-sm font-medium leading-none">{t('admin.layout.superAdmin')}</p>
                     <p className="text-xs leading-none text-muted-foreground">
                       admin@example.com
                     </p>
@@ -293,7 +341,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => setShowLogoutDialog(true)}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
+                  <span>{t('admin.layout.logout')}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

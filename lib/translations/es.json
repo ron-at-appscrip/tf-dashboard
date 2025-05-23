@@ -1,0 +1,83 @@
+{
+  "auth": {
+    "login": {
+      "title": "TrulyFree",
+      "subtitle": "Administrador de Tienda",
+      "emailLabel": "Correo Electrónico",
+      "emailPlaceholder": "tu@correo.com",
+      "sendMagicLink": "Enviar Enlace Mágico",
+      "sendingMagicLink": "Enviando enlace mágico...",
+      "checkEmail": "Revisa tu correo",
+      "magicLinkSent": "Enviamos un enlace mágico a {email}. Haz clic en el enlace para iniciar sesión.",
+      "useDifferentEmail": "Usar un correo diferente",
+      "successfullyLoggedIn": "¡Inicio de sesión exitoso!",
+      "redirecting": "Redirigiendo a la selección de tienda...",
+      "secureLogin": {
+        "title": "Inicio de Sesión Seguro:",
+        "description": "Te enviaremos un enlace mágico seguro para acceder a tu panel de administración de tienda."
+      }
+    }
+  },
+  "store": {
+    "selection": {
+      "title": "Seleccionar Marca",
+      "subtitle": "Elige qué marca quieres administrar",
+      "stores": {
+        "superadmin": {
+          "name": "Superadmin",
+          "description": "Superadmin"
+        },
+        "trulyfreehome": {
+          "name": "Trulyfreehome",
+          "description": "Productos para el hogar y limpieza"
+        },
+        "truself": {
+          "name": "Truself Organics",
+          "description": "Cuidado personal orgánico"
+        },
+        "marketplace": {
+          "name": "TF Marketplace",
+          "description": "Sin permisos de acceso"
+        }
+      }
+    }
+  },
+  "admin": {
+    "layout": {
+      "search": "Buscar...",
+      "superAdmin": "Super Administrador",
+      "systemAdministrator": "Administrador del Sistema",
+      "storeManager": "Administrador de Tienda",
+      "logout": "Cerrar sesión",
+      "navigation": {
+        "dashboard": "Panel de Control",
+        "stores": "Tiendas",
+        "users": "Usuarios",
+        "roles": "Roles",
+        "auditLogs": "Registros de Auditoría",
+        "systemSettings": "Configuración del Sistema",
+        "products": {
+          "title": "Productos",
+          "allProducts": "Todos los Productos",
+          "categories": "Categorías",
+          "bundleBuilder": "Constructor de Paquetes"
+        },
+        "orders": {
+          "title": "Pedidos",
+          "allOrders": "Todos los Pedidos",
+          "draftOrders": "Pedidos en Borrador",
+          "submittedOrders": "Pedidos Enviados",
+          "abandonedCarts": "Carritos Abandonados"
+        },
+        "customers": "Clientes",
+        "pageBuilder": "Constructor de Páginas",
+        "campaignManager": "Gestor de Campañas",
+        "analytics": "Análisis",
+        "usersAndRoles": "Usuarios y Roles",
+        "support": "Soporte",
+        "storeSettings": "Configuración de Tienda",
+        "helpAndResources": "Ayuda y Recursos"
+      }
+    }
+  }
+} 

@@ -1,0 +1,83 @@
+{
+  "auth": {
+    "login": {
+      "title": "TrulyFree",
+      "subtitle": "Store Manager",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "your@email.com",
+      "sendMagicLink": "Send Magic Link",
+      "sendingMagicLink": "Sending magic link...",
+      "checkEmail": "Check your email",
+      "magicLinkSent": "We sent a magic link to {email}. Click the link to sign in.",
+      "useDifferentEmail": "Use a different email",
+      "successfullyLoggedIn": "Successfully logged in!",
+      "redirecting": "Redirecting to store selection...",
+      "secureLogin": {
+        "title": "Secure Login:",
+        "description": "We'll send you a secure magic link to access your store manager dashboard."
+      }
+    }
+  },
+  "store": {
+    "selection": {
+      "title": "Select Brand",
+      "subtitle": "Choose which brand you want to manage",
+      "stores": {
+        "superadmin": {
+          "name": "Superadmin",
+          "description": "Superadmin"
+        },
+        "trulyfreehome": {
+          "name": "Trulyfreehome",
+          "description": "Home & cleaning products"
+        },
+        "truself": {
+          "name": "Truself Organics",
+          "description": "Organic personal care"
+        },
+        "marketplace": {
+          "name": "TF Marketplace",
+          "description": "No access permissions"
+        }
+      }
+    }
+  },
+  "admin": {
+    "layout": {
+      "search": "Search...",
+      "superAdmin": "Super Admin",
+      "systemAdministrator": "System Administrator",
+      "storeManager": "Store Manager",
+      "logout": "Log out",
+      "navigation": {
+        "dashboard": "Dashboard",
+        "stores": "Stores",
+        "users": "Users",
+        "roles": "Roles",
+        "auditLogs": "Audit Logs",
+        "systemSettings": "System Settings",
+        "products": {
+          "title": "Products",
+          "allProducts": "All Products",
+          "categories": "Categories",
+          "bundleBuilder": "Bundle Builder"
+        },
+        "orders": {
+          "title": "Orders",
+          "allOrders": "All Orders",
+          "draftOrders": "Draft Orders",
+          "submittedOrders": "Submitted Orders",
+          "abandonedCarts": "Abandoned Carts"
+        },
+        "customers": "Customers",
+        "pageBuilder": "Page Builder",
+        "campaignManager": "Campaign Manager",
+        "analytics": "Analytics",
+        "usersAndRoles": "Users & Roles",
+        "support": "Support",
+        "storeSettings": "Store Settings",
+        "helpAndResources": "Help & Resources"
+      }
+    }
+  }
+} 

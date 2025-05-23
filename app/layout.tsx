@@ -4,12 +4,13 @@ import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import { StoreProvider } from "@/lib/store-context";
+import { LanguageProvider } from "@/contexts/language-context";
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'TF-TFM',
-  description: 'Trulyfree Storefront Manager',
+  title: 'TrulyFree Store Manager',
+  description: 'Manage your TrulyFree store',
 };
 
 export default function RootLayout({
@@ -27,7 +28,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <StoreProvider>
-            {children}
+            <LanguageProvider>
+              {children}
+            </LanguageProvider>
           </StoreProvider>
         </ThemeProvider>
       </body>

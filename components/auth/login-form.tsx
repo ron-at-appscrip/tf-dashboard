@@ -17,6 +17,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { CheckCircle, Mail, Loader2, LogIn, Home, Lock } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "@/lib/translations";
+import { useLanguage } from "@/contexts/language-context";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -27,6 +29,8 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { language } = useLanguage();
+  const { t } = useTranslation(language);
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -38,16 +42,12 @@ export function LoginForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setIsLoading(true);
-      // Here you would typically make an API call to send the magic link
       console.log("Sending magic link to:", values.email);
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       setEmailSent(true);
       
-      // Simulate successful login after 3 seconds
       setTimeout(() => {
         setIsLoggedIn(true);
-        // Redirect after showing success message
         setTimeout(() => {
           router.push("/store-selection");
         }, 1500);
@@ -65,9 +65,9 @@ export function LoginForm() {
         <div className="rounded-full bg-green-100 p-3 w-fit mx-auto">
           <LogIn className="h-6 w-6 text-green-600" />
         </div>
-        <h3 className="text-lg font-medium">Successfully logged in!</h3>
+        <h3 className="text-lg font-medium">{t('auth.login.successfullyLoggedIn')}</h3>
         <p className="text-sm text-muted-foreground">
-          Redirecting to store selection...
+          {t('auth.login.redirecting')}
         </p>
       </div>
     );
@@ -79,9 +79,9 @@ export function LoginForm() {
         <div className="rounded-full bg-green-100 p-3 w-fit mx-auto">
           <CheckCircle className="h-6 w-6 text-green-600" />
         </div>
-        <h3 className="text-lg font-medium">Check your email</h3>
+        <h3 className="text-lg font-medium">{t('auth.login.checkEmail')}</h3>
         <p className="text-sm text-muted-foreground">
-          We sent a magic link to {form.getValues("email")}. Click the link to sign in.
+          {t('auth.login.magicLinkSent', { email: form.getValues("email") })}
         </p>
         <div className="flex flex-col gap-2">
           <Button
@@ -89,9 +89,8 @@ export function LoginForm() {
             onClick={() => setEmailSent(false)}
             className="mt-4"
           >
-            Use a different email
+            {t('auth.login.useDifferentEmail')}
           </Button>
-        
         </div>
       </div>
     );
@@ -102,8 +101,8 @@ export function LoginForm() {
       <div className="bg-green-500 rounded-xl p-4 mb-4 flex items-center justify-center">
         <Home className="text-white w-8 h-8" />
       </div>
-      <h1 className="text-2xl font-bold text-green-700 mb-1">TrulyFree</h1>
-      <p className="text-gray-500 mb-6 text-center">Store Manager</p>
+      <h1 className="text-2xl font-bold text-green-700 mb-1">{t('auth.login.title')}</h1>
+      <p className="text-gray-500 mb-6 text-center">{t('auth.login.subtitle')}</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-80">
           <FormField
@@ -111,9 +110,9 @@ export function LoginForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-700 text-sm mb-2">Email Address</FormLabel>
+                <FormLabel className="text-gray-700 text-sm mb-2">{t('auth.login.emailLabel')}</FormLabel>
                 <FormControl>
-                  <Input placeholder="your@email.com" {...field} />
+                  <Input placeholder={t('auth.login.emailPlaceholder')} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -127,12 +126,12 @@ export function LoginForm() {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Sending magic link...
+                {t('auth.login.sendingMagicLink')}
               </>
             ) : (
               <>
                 <Home className="w-5 h-5" />
-                Send Magic Link
+                {t('auth.login.sendMagicLink')}
               </>
             )}
           </Button>
@@ -141,9 +140,9 @@ export function LoginForm() {
       <div className="w-full bg-green-50 border border-green-200 rounded-lg p-3 flex items-start gap-2 mt-4">
         <Lock className="text-yellow-500 w-5 h-5 mt-0.5" />
         <div>
-          <span className="font-semibold text-sm text-gray-700">Secure Login:</span>
+          <span className="font-semibold text-sm text-gray-700">{t('auth.login.secureLogin.title')}</span>
           <span className="text-sm text-gray-600 ml-1">
-            We&apos;ll send you a secure magic link to access your store manager dashboard.
+            {t('auth.login.secureLogin.description')}
           </span>
         </div>
       </div>

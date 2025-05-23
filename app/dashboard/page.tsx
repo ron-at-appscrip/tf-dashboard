@@ -75,7 +75,7 @@ export default function DashboardPage() {
           </h1>
           <p className="text-muted-foreground">
             {currentStore?.isSuperAdmin 
-              ? "Welcome to your TF-TFM Super Admin dashboard."
+              ? "Welcome to your  Super Admin dashboard."
               : `Welcome to your ${currentStore?.name} dashboard.`
             }
           </p>
