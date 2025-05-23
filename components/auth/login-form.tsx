@@ -62,8 +62,8 @@ export function LoginForm() {
   if (isLoggedIn) {
     return (
       <div className="text-center space-y-4">
-        <div className="rounded-full bg-green-100 p-3 w-fit mx-auto">
-          <LogIn className="h-6 w-6 text-green-600" />
+        <div className="rounded-full bg-primary/10 p-3 w-fit mx-auto">
+          <LogIn className="h-6 w-6 text-primary" />
         </div>
         <h3 className="text-lg font-medium">{t('auth.login.successfullyLoggedIn')}</h3>
         <p className="text-sm text-muted-foreground">
@@ -76,8 +76,8 @@ export function LoginForm() {
   if (emailSent) {
     return (
       <div className="text-center space-y-4">
-        <div className="rounded-full bg-green-100 p-3 w-fit mx-auto">
-          <CheckCircle className="h-6 w-6 text-green-600" />
+        <div className="rounded-full bg-primary/10 p-3 w-fit mx-auto">
+          <CheckCircle className="h-6 w-6 text-primary" />
         </div>
         <h3 className="text-lg font-medium">{t('auth.login.checkEmail')}</h3>
         <p className="text-sm text-muted-foreground">
@@ -98,11 +98,11 @@ export function LoginForm() {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="bg-green-500 rounded-xl p-4 mb-4 flex items-center justify-center">
-        <Home className="text-white w-8 h-8" />
+      <div className="bg-primary rounded-xl p-4 mb-4 flex items-center justify-center">
+        <Home className="text-primary-foreground w-8 h-8" />
       </div>
-      <h1 className="text-2xl font-bold text-green-700 mb-1">{t('auth.login.title')}</h1>
-      <p className="text-gray-500 mb-6 text-center">{t('auth.login.subtitle')}</p>
+      <h1 className="text-2xl font-bold text-foreground mb-1">{t('auth.login.title')}</h1>
+      <p className="text-muted-foreground mb-6 text-center">{t('auth.login.subtitle')}</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-80">
           <FormField
@@ -110,7 +110,7 @@ export function LoginForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-700 text-sm mb-2">{t('auth.login.emailLabel')}</FormLabel>
+                <FormLabel className="text-foreground text-sm mb-2">{t('auth.login.emailLabel')}</FormLabel>
                 <FormControl>
                   <Input placeholder={t('auth.login.emailPlaceholder')} {...field} />
                 </FormControl>
@@ -120,7 +120,7 @@ export function LoginForm() {
           />
           <Button 
             type="submit" 
-            className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-lg transition"
+            className="w-full flex items-center justify-center gap-2"
             disabled={isLoading}
           >
             {isLoading ? (
@@ -137,11 +137,11 @@ export function LoginForm() {
           </Button>
         </form>
       </Form>
-      <div className="w-full bg-green-50 border border-green-200 rounded-lg p-3 flex items-start gap-2 mt-4">
+      <div className="w-full bg-muted/50 border border-border rounded-lg p-3 flex items-start gap-2 mt-4">
         <Lock className="text-yellow-500 w-5 h-5 mt-0.5" />
         <div>
-          <span className="font-semibold text-sm text-gray-700">{t('auth.login.secureLogin.title')}</span>
-          <span className="text-sm text-gray-600 ml-1">
+          <span className="font-semibold text-sm text-foreground">{t('auth.login.secureLogin.title')}</span>
+          <span className="text-sm text-muted-foreground ml-1">
             {t('auth.login.secureLogin.description')}
           </span>
         </div>
