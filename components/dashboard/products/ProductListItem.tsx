@@ -3,6 +3,7 @@ import { Product } from "@/types/product";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 interface ProductListItemProps {
   product: Product;
@@ -43,7 +44,9 @@ export function ProductListItem({ product }: ProductListItemProps) {
         </div>
       </div>
       <div className="flex gap-2 min-w-[180px] items-end">
-        <Button variant="outline" size="sm">View Details</Button>
+        <Link href={`/products/${product.id}`} passHref legacyBehavior>
+          <Button variant="outline" size="sm">View Details</Button>
+        </Link>
         <Button variant="outline" size="sm">Duplicate</Button>
         <Button variant="outline" size="sm">Sync</Button>
       </div>
