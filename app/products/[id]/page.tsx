@@ -8,6 +8,7 @@ import { ProductInfo } from "@/components/products/ProductInfo";
 import { ProductDescription } from "@/components/products/ProductDescription";
 import { ProductMetadata } from "@/components/products/ProductMetadata";
 import { ProductBundles } from "@/components/products/ProductBundles";
+import { ProductShippingInfo } from "@/components/products/ProductShippingInfo";
 
 interface ProductDetailsPageProps {
   params: { id: string };
@@ -48,6 +49,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
         <ProductDescription product={product} />
         <ProductMetadata product={product} />
       </div>
+      <ProductShippingInfo />
 
       <ProductBundles bundles={bundles} />
     </div>
