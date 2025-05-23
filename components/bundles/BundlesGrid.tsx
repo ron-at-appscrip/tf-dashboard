@@ -30,7 +30,7 @@ function BundleCard({ bundle }: { bundle: Bundle }) {
         {bundle.type.map((t) => (
           <span
             key={t}
-            className={`px-2 py-1 rounded text-xs font-semibold uppercase ${
+            className={`px-2 py-1 flex items-center justify-center rounded text-xs font-semibold uppercase ${
               t === "main"
                 ? "bg-green-100 text-green-700"
                 : t === "upsell"

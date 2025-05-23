@@ -78,7 +78,9 @@ export function BundlesFilters({
           </SelectTrigger>
           <SelectContent>
             {typeOptions.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -88,7 +90,9 @@ export function BundlesFilters({
           </SelectTrigger>
           <SelectContent>
             {statusOptions.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -98,30 +102,44 @@ export function BundlesFilters({
           </SelectTrigger>
           <SelectContent>
             {visibilityOptions.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
         {hasActiveFilters && onClearFilters && (
-          <Button variant="outline" size="sm" onClick={onClearFilters} className="ml-2 mt-2 md:mt-0">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onClearFilters}
+            className="ml-2 mt-2 md:mt-0"
+          >
             Clear Filters
           </Button>
         )}
       </div>
-      <div className="flex items-center gap-2 text-muted-foreground text-sm mt-2">
-        <span>Showing {showingCount} of {totalBundles} bundles</span>
-        <Select value={String(pageSize)} onValueChange={v => setPageSize(Number(v))}>
-          <SelectTrigger className="w-[80px] h-7 text-xs ml-2">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {pageSizeOptions.map(opt => (
-              <SelectItem key={opt} value={String(opt)}>{opt}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <span>per page</span>
+      <div className="flex items-center gap-2  w-full text-muted-foreground text-sm mt-2">
+        <span className="flex items-center">
+          Showing
+          <Select
+            value={String(pageSize)}
+            onValueChange={(v) => setPageSize(Number(v))}
+          >
+            <SelectTrigger className="w-[80px] h-7 text-xs mx-2">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {pageSizeOptions.map((opt) => (
+                <SelectItem key={opt} value={String(opt)}>
+                  {opt}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select> of {totalBundles} bundles
+        </span>
+
       </div>
     </>
   );
-} 
+}

@@ -3,7 +3,7 @@
 import { AdminLayout } from "@/components/layout/admin-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { PlusCircle, Search, LayoutGrid, List } from "lucide-react";
+import { Search, LayoutGrid, List, RefreshCcw, ChartArea, Download } from "lucide-react";
 import { products as allProducts } from "@/data/products";
 import { ProductCard } from "@/components/dashboard/products/ProductCard";
 import { ProductListItem } from "@/components/dashboard/products/ProductListItem";
@@ -121,9 +121,18 @@ export default function ProductsPage() {
             <p className="text-muted-foreground">Manage your product catalog and inventory</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline">Analytics</Button>
-            <Button variant="outline">Export</Button>
-            <Button onClick={() => setSyncModalOpen(true)}>Sync Products</Button>
+            <Button variant="outline">
+              <ChartArea className="w-4 h-4 mr-2" />
+              Analytics
+            </Button>
+            <Button variant="outline">
+              <Download className="w-4 h-4 mr-2" />
+              Export
+            </Button>
+            <Button onClick={() => setSyncModalOpen(true)}>
+              <RefreshCcw className="w-4 h-4 mr-2" />
+              Sync Products
+            </Button>
           </div>
         </div>
 
