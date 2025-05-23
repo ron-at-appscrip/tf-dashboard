@@ -129,7 +129,7 @@ const getStoreNavItems = (t: (key: string) => string): NavItem[] => [
   },
   { 
     title: t('admin.layout.navigation.usersAndRoles'), 
-    href: "/users", 
+    href: "/admin/users", 
     icon: <UserCog className="h-5 w-5" /> 
   },
   { 
