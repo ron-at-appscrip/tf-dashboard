@@ -48,9 +48,9 @@ function BundleCard({ bundle }: { bundle: Bundle }) {
           </span>
         ))}
       </div>
-      <div className="font-bold text-lg leading-tight mb-1">{bundle.name}</div>
+      <div className="font-bold text-lg leading-tight mb-1 line-clamp-1">{bundle.name}</div>
       <div className="text-xs text-muted-foreground mb-1">SKU: {bundle.sku}</div>
-      <div className="text-sm text-muted-foreground mb-2">{bundle.description}</div>
+      <div className="text-sm text-muted-foreground mb-2 line-clamp-2">{bundle.description}</div>
       <div className="text-xs font-semibold mb-1">{bundle.products.length} PRODUCT{bundle.products.length > 1 ? "S" : ""}</div>
       <div className="flex flex-col gap-1 mb-2">
         {bundle.products.map((p, i) => (

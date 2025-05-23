@@ -2,7 +2,7 @@
 import { AdminLayout } from "@/components/layout/admin-layout";
 import { Button } from "@/components/ui/button";
 import { bundles as allBundles } from "@/data/bundles";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BundlesFilters } from "@/components/bundles/BundlesFilters";
 import { BundlesGrid } from "@/components/bundles/BundlesGrid";
 import { BundlesPagination } from "@/components/bundles/BundlesPagination";
@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { products } from "@/data/products";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const pageSizeOptions = [5, 10, 20, 50];
 
@@ -35,6 +36,14 @@ export default function BundlesPage() {
   const [seoTitle, setSeoTitle] = useState("");
   const [seoKeywords, setSeoKeywords] = useState("");
   const [seoDescription, setSeoDescription] = useState("");
+  const [bundleProductDetails, setBundleProductDetails] = useState<{
+    [id: string]: {
+      qty: number;
+      main: boolean;
+      billingModelId: string;
+      offerId: string;
+    };
+  }>({});
 
   // Filtering logic
   let filteredBundles = bundles.filter((bundle) => {
@@ -85,6 +94,59 @@ export default function BundlesPage() {
   );
   const selectedProductObjs = products.filter((p) => selectedProducts.includes(p.id));
 
+  // When selectedProducts changes, sync bundleProductDetails
+  useEffect(() => {
+    setBundleProductDetails(prev => {
+      const next = { ...prev };
+      // Add new products
+      selectedProducts.forEach((id, idx) => {
+        if (!next[id]) {
+          next[id] = {
+            qty: 1,
+            main: idx === 0 && !Object.values(next).some(x => x.main),
+            billingModelId: "",
+            offerId: "",
+          };
+        }
+      });
+      // Remove unselected products
+      Object.keys(next).forEach(id => {
+        if (!selectedProducts.includes(id)) delete next[id];
+      });
+      // Ensure only one main
+      const mainIds = Object.entries(next).filter(([_, v]) => v.main).map(([id]) => id);
+      if (mainIds.length > 1) {
+        // Only keep the first as main
+        mainIds.slice(1).forEach(id => { next[id].main = false; });
+      }
+      // If none is main, set the first as main
+      if (Object.values(next).length && !Object.values(next).some(x => x.main)) {
+        const firstId = Object.keys(next)[0];
+        if (firstId) next[firstId].main = true;
+      }
+      return next;
+    });
+  }, [selectedProducts]);
+
+  // Handlers for preview controls
+  const handleQtyChange = (id: string, qty: number) => {
+    setBundleProductDetails(prev => ({ ...prev, [id]: { ...prev[id], qty: Math.max(1, qty) } }));
+  };
+  const handleMainChange = (id: string) => {
+    setBundleProductDetails(prev => {
+      const next = { ...prev };
+      Object.keys(next).forEach(pid => { next[pid].main = false; });
+      next[id].main = true;
+      return next;
+    });
+  };
+  const handleBillingModelChange = (id: string, value: string) => {
+    setBundleProductDetails(prev => ({ ...prev, [id]: { ...prev[id], billingModelId: value } }));
+  };
+  const handleOfferIdChange = (id: string, value: string) => {
+    setBundleProductDetails(prev => ({ ...prev, [id]: { ...prev[id], offerId: value } }));
+  };
+
   // Create Bundle Handler
   function handleCreateBundle() {
     if (!bundleName.trim() || selectedProducts.length === 0) return;
@@ -94,11 +156,13 @@ export default function BundlesPage() {
     const now = new Date();
     const date = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`;
     // Prepare products for bundle
-    const bundleProducts = products.filter(p => selectedProducts.includes(p.id)).map((p, idx) => ({
+    const bundleProducts = products.filter(p => selectedProducts.includes(p.id)).map((p) => ({
       name: p.name,
-      qty: 1,
+      qty: bundleProductDetails[p.id]?.qty || 1,
       price: parseFloat(p.price),
-      main: idx === 0,
+      main: !!bundleProductDetails[p.id]?.main,
+      billingModelId: bundleProductDetails[p.id]?.billingModelId || "",
+      offerId: bundleProductDetails[p.id]?.offerId || "",
     }));
     const msrp = bundleProducts.reduce((sum, p) => sum + p.price * p.qty, 0);
     const bundlePrice = msrp; // You can add discount logic if needed
@@ -134,6 +198,7 @@ export default function BundlesPage() {
     setSeoTitle("");
     setSeoKeywords("");
     setSeoDescription("");
+    setBundleProductDetails({});
   }
 
   return (
@@ -338,28 +403,66 @@ export default function BundlesPage() {
                 ) : (
                   <div className="flex flex-col gap-3 max-h-80 overflow-y-auto">
                     {selectedProductObjs.map(product => (
-                      <div key={product.id} className="flex w-[95%] items-center gap-3 border rounded-lg p-2 bg-background relative group">
-                        <button
-                          type="button"
-                          className="absolute -top-2 -right-2 bg-white border border-gray-200 rounded-full p-1 shadow hover:bg-red-50 hover:text-destructive transition opacity-80 group-hover:opacity-100"
-                          onClick={() => handleProductToggle(product.id)}
-                          tabIndex={0}
-                          aria-label={`Remove ${product.name}`}
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                        <div className="w-16 h-12 bg-gray-100 rounded flex items-center justify-center overflow-hidden">
-                          {product.images && product.images[0] ? (
-                            <img src={product.images[0]} alt={product.name} className="object-cover w-full h-full rounded" />
-                          ) : (
-                            <span>200 x 150</span>
-                          )}
+                      <div key={product.id} className="flex flex-col gap-2 border rounded-lg p-3 bg-background relative group">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="w-12 h-12 bg-gray-100 rounded flex items-center justify-center overflow-hidden">
+                            {product.images && product.images[0] ? (
+                              <img src={product.images[0]} alt={product.name} className="object-cover w-full h-full rounded" />
+                            ) : (
+                              <span>200 x 150</span>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="font-semibold text-base truncate">{product.name}</div>
+                          </div>
+                          <button
+                            type="button"
+                            className="absolute top-2 right-2 bg-white border border-gray-200 rounded-full p-1 shadow hover:bg-red-50 hover:text-destructive transition opacity-80 group-hover:opacity-100"
+                            onClick={() => handleProductToggle(product.id)}
+                            tabIndex={0}
+                            aria-label={`Remove ${product.name}`}
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-sm truncate">{product.name}</div>
-                          <div className="text-xs text-muted-foreground truncate">{product.id}</div>
+                        <div className="flex items-center gap-2 mb-2">
+                        <div className="bg-gray-50 w-full border rounded-lg p-2 flex flex-col gap-2">
+                          <div className="font-medium text-xs mb-1">Display Ttitle</div>
+                          <div className="flex gap-2 ">
+                            <Input
+                              placeholder="Display Title"
+                              value={bundleProductDetails[product.id]?.billingModelId || ""}
+                              onChange={e => handleBillingModelChange(product.id, e.target.value)}
+                            />
+                            
+                          </div>
                         </div>
-                        <div className="text-emerald-700 font-semibold text-base">${product.price}</div>
+                        </div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <Checkbox
+                            checked={!!bundleProductDetails[product.id]?.main}
+                            onCheckedChange={() => handleMainChange(product.id)}
+                            id={`main-item-${product.id}`}
+                          />
+                          <label htmlFor={`main-item-${product.id}`} className="text-sm">Main item</label>
+                        </div>
+                        <div className="bg-gray-50 border rounded-lg p-2 flex flex-col gap-2">
+                          <div className="font-medium text-xs mb-1">Sticky Settings</div>
+                          <div className="flex gap-2">
+                            <Input
+                              placeholder="Billing Model ID"
+                              value={bundleProductDetails[product.id]?.billingModelId || ""}
+                              onChange={e => handleBillingModelChange(product.id, e.target.value)}
+                              className="w-1/2"
+                            />
+                            <Input
+                              placeholder="Offer ID"
+                              value={bundleProductDetails[product.id]?.offerId || ""}
+                              onChange={e => handleOfferIdChange(product.id, e.target.value)}
+                              className="w-1/2"
+                            />
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>
