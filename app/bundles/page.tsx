@@ -6,18 +6,13 @@ import React, { useState, useEffect } from "react";
 import { BundlesFilters } from "@/components/bundles/BundlesFilters";
 import { BundlesGrid } from "@/components/bundles/BundlesGrid";
 import { BundlesPagination } from "@/components/bundles/BundlesPagination";
-import { PlusCircle, ChartArea, Download, Search, X } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { products } from "@/data/products";
-import { Checkbox } from "@/components/ui/checkbox";
+import { PlusCircle, ChartArea, Download } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const pageSizeOptions = [5, 10, 20, 50];
 
 export default function BundlesPage() {
+  const router = useRouter();
   const [bundles, setBundles] = useState(allBundles);
   const [search, setSearch] = useState("");
   const [type, setType] = useState("all");
@@ -25,25 +20,14 @@ export default function BundlesPage() {
   const [visibility, setVisibility] = useState("all");
   const [pageSize, setPageSize] = useState(5);
   const [page, setPage] = useState(1);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [bundleName, setBundleName] = useState("");
-  const [description, setDescription] = useState("");
-  const [bundleSlug, setBundleSlug] = useState("");
-  const [bundleType, setBundleType] = useState("main");
-  const [productSearch, setProductSearch] = useState("");
-  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
-  const [storefrontVisible, setStorefrontVisible] = useState(false);
-  const [seoTitle, setSeoTitle] = useState("");
-  const [seoKeywords, setSeoKeywords] = useState("");
-  const [seoDescription, setSeoDescription] = useState("");
-  const [bundleProductDetails, setBundleProductDetails] = useState<{
-    [id: string]: {
-      qty: number;
-      main: boolean;
-      billingModelId: string;
-      offerId: string;
-    };
-  }>({});
+
+  // Load user bundles from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const userBundles = JSON.parse(localStorage.getItem('userBundles') || '[]');
+      setBundles([...userBundles, ...allBundles]);
+    }
+  }, []);
 
   // Filtering logic
   let filteredBundles = bundles.filter((bundle) => {
@@ -64,142 +48,17 @@ export default function BundlesPage() {
 
   const totalBundles = filteredBundles.length;
   const totalPages = Math.ceil(totalBundles / pageSize);
-  const paginatedBundles = filteredBundles.slice((page - 1) * pageSize, page * pageSize);
+  const startIndex = (page - 1) * pageSize;
+  const paginatedBundles = filteredBundles.slice(startIndex, startIndex + pageSize);
 
-  // Reset to page 1 if filters change
-  React.useEffect(() => {
-    setPage(1);
-  }, [search, type, status, visibility, pageSize]);
-
-  const hasActiveFilters =
-    !!search || type !== "all" || status !== "all" || visibility !== "all";
+  const hasActiveFilters = search || type !== "all" || status !== "all" || visibility !== "all";
 
   const handleClearFilters = () => {
     setSearch("");
     setType("all");
     setStatus("all");
     setVisibility("all");
-    setPage(1);
   };
-
-  const handleProductToggle = (id: string) => {
-    setSelectedProducts((prev) =>
-      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id]
-    );
-  };
-
-  const filteredProducts = products.filter((p) =>
-    p.name.toLowerCase().includes(productSearch.toLowerCase()) ||
-    p.id.toLowerCase().includes(productSearch.toLowerCase())
-  );
-  const selectedProductObjs = products.filter((p) => selectedProducts.includes(p.id));
-
-  // When selectedProducts changes, sync bundleProductDetails
-  useEffect(() => {
-    setBundleProductDetails(prev => {
-      const next = { ...prev };
-      // Add new products
-      selectedProducts.forEach((id, idx) => {
-        if (!next[id]) {
-          next[id] = {
-            qty: 1,
-            main: idx === 0 && !Object.values(next).some(x => x.main),
-            billingModelId: "",
-            offerId: "",
-          };
-        }
-      });
-      // Remove unselected products
-      Object.keys(next).forEach(id => {
-        if (!selectedProducts.includes(id)) delete next[id];
-      });
-      // Ensure only one main
-      const mainIds = Object.entries(next).filter(([_, v]) => v.main).map(([id]) => id);
-      if (mainIds.length > 1) {
-        // Only keep the first as main
-        mainIds.slice(1).forEach(id => { next[id].main = false; });
-      }
-      // If none is main, set the first as main
-      if (Object.values(next).length && !Object.values(next).some(x => x.main)) {
-        const firstId = Object.keys(next)[0];
-        if (firstId) next[firstId].main = true;
-      }
-      return next;
-    });
-  }, [selectedProducts]);
-
-  // Handlers for preview controls
-  const handleQtyChange = (id: string, qty: number) => {
-    setBundleProductDetails(prev => ({ ...prev, [id]: { ...prev[id], qty: Math.max(1, qty) } }));
-  };
-  const handleMainChange = (id: string) => {
-    setBundleProductDetails(prev => {
-      const next = { ...prev };
-      Object.keys(next).forEach(pid => { next[pid].main = false; });
-      next[id].main = true;
-      return next;
-    });
-  };
-  const handleBillingModelChange = (id: string, value: string) => {
-    setBundleProductDetails(prev => ({ ...prev, [id]: { ...prev[id], billingModelId: value } }));
-  };
-  const handleOfferIdChange = (id: string, value: string) => {
-    setBundleProductDetails(prev => ({ ...prev, [id]: { ...prev[id], offerId: value } }));
-  };
-
-  // Create Bundle Handler
-  function handleCreateBundle() {
-    if (!bundleName.trim() || selectedProducts.length === 0) return;
-    // Generate a unique SKU and slug
-    const sku = `BND-${Date.now()}`;
-    const slug = bundleSlug.trim() || bundleName.trim().toLowerCase().replace(/\s+/g, "-");
-    const now = new Date();
-    const date = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`;
-    // Prepare products for bundle
-    const bundleProducts = products.filter(p => selectedProducts.includes(p.id)).map((p) => ({
-      name: p.name,
-      qty: bundleProductDetails[p.id]?.qty || 1,
-      price: parseFloat(p.price),
-      main: !!bundleProductDetails[p.id]?.main,
-      billingModelId: bundleProductDetails[p.id]?.billingModelId || "",
-      offerId: bundleProductDetails[p.id]?.offerId || "",
-    }));
-    const msrp = bundleProducts.reduce((sum, p) => sum + p.price * p.qty, 0);
-    const bundlePrice = msrp; // You can add discount logic if needed
-    const customerSaves = 0;
-    const type = [bundleType, "active"];
-    setBundles(prev => [{
-      name: bundleName,
-      sku,
-      description,
-      type,
-      products: bundleProducts,
-      msrp,
-      bundlePrice,
-      customerSaves,
-      date,
-      slug,
-      storefront: storefrontVisible,
-      seo: {
-        title: seoTitle,
-        keywords: seoKeywords,
-        description: seoDescription,
-      },
-    }, ...prev]);
-    // Reset form and close modal
-    setIsCreateModalOpen(false);
-    setBundleName("");
-    setDescription("");
-    setBundleSlug("");
-    setBundleType("main");
-    setProductSearch("");
-    setSelectedProducts([]);
-    setStorefrontVisible(false);
-    setSeoTitle("");
-    setSeoKeywords("");
-    setSeoDescription("");
-    setBundleProductDetails({});
-  }
 
   return (
     <AdminLayout>
@@ -219,271 +78,13 @@ export default function BundlesPage() {
               <Download className="w-4 h-4 mr-2" />
               Export
             </Button>
-            <Button onClick={() => setIsCreateModalOpen(true)}>
+            <Button onClick={() => router.push("/bundles/create")}>
               <PlusCircle className="w-4 h-4 mr-2" />
               Create Bundle
             </Button>
           </div>
         </div>
-        {/* Create Bundle Modal */}
-        <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-          <DialogContent className="max-w-5xl w-full max-h-[85vh] flex flex-col">
-            <div className="mb-2 shrink-0">
-              <h2 className="text-2xl font-bold">Create New Bundle</h2>
-              <p className="text-muted-foreground text-sm mt-1">Combine products into a bundle offer for your funnels</p>
-            </div>
-            <div className="flex flex-1 gap-6 min-h-0">
-              {/* Left: Bundle Information and Product Selection */}
-              <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden grid grid-cols-1 gap-6 md:block">
-                <div className="bg-white rounded-xl shadow p-6 flex flex-col gap-4 border min-w-0">
-                  <h3 className="text-lg font-semibold mb-2">Bundle Information</h3>
-                  <div>
-                    <Label htmlFor="bundle-name">Bundle Name <span className="text-destructive">*</span></Label>
-                    <Input
-                      id="bundle-name"
-                      placeholder="e.g., Buy 1 Get 3 Free Freshener Bundle"
-                      value={bundleName}
-                      onChange={e => setBundleName(e.target.value)}
-                      className="mt-1"
-                    />
-                    <div className="text-xs text-muted-foreground mt-1">This will be displayed to customers</div>
-                  </div>
-                  <div>
-                    <Label htmlFor="bundle-description">Description</Label>
-                    <Textarea
-                      id="bundle-description"
-                      placeholder="Describe what makes this bundle special..."
-                      value={description}
-                      onChange={e => setDescription(e.target.value)}
-                      className="mt-1"
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="bundle-slug">Bundle Slug </Label>
-                      <Input
-                        id="bundle-slug"
-                        placeholder="buy-1-get-3-freshener"
-                        value={bundleSlug}
-                        onChange={e => setBundleSlug(e.target.value)}
-                        className="mt-1"
-                      />
-                      <div className="text-xs text-muted-foreground mt-1">URL-friendly identifier</div>
-                    </div>
-                    <div>
-                      <Label htmlFor="bundle-type">Bundle Type</Label>
-                      <Select value={bundleType} onValueChange={setBundleType}>
-                        <SelectTrigger id="bundle-type" className="mt-1">
-                          <SelectValue placeholder="Select type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="main">Main Offer</SelectItem>
-                          <SelectItem value="upsell">Upsell</SelectItem>
-                          <SelectItem value="cross-sell">Cross-sell</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  {/* Storefront Visibility */}
-                  <div className="mt-4 p-4 rounded-lg border border-yellow-300 bg-yellow-50 flex flex-col gap-2">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-yellow-700 text-lg">⚠️</span>
-                      <span className="font-semibold text-yellow-800">Storefront Visibility</span>
-                    </div>
-                    <label className="flex items-center gap-2 text-sm font-medium text-yellow-900">
-                      <input
-                        type="checkbox"
-                        checked={storefrontVisible}
-                        onChange={e => setStorefrontVisible(e.target.checked)}
-                        className="accent-yellow-500"
-                      />
-                      Show this bundle on storefront
-                    </label>
-                    <div className="text-xs text-yellow-800 mt-1">
-                      By default, bundles are only visible in funnels. Check this to also show on your main store.
-                    </div>
-                  </div>
-                  {/* Product Selection */}
-                  <div className="bg-background rounded-xl border p-4 mt-6">
-                    <h4 className="text-base font-semibold mb-3">Select Products</h4>
-                    <div className="relative mb-4">
-                      <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        type="search"
-                        placeholder="Search products by name or SKU..."
-                        className="pl-8"
-                        value={productSearch}
-                        onChange={e => setProductSearch(e.target.value)}
-                      />
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-2 max-h-64 overflow-y-auto overflow-x-hidden min-w-0">
-                      {filteredProducts.map(product => (
-                        <div
-                          key={product.id}
-                          className={`border rounded-lg p-3 flex flex-col gap-2 bg-white shadow-sm cursor-pointer transition ring-2 ${selectedProducts.includes(product.id) ? 'ring-primary' : 'ring-transparent'}`}
-                          onClick={() => handleProductToggle(product.id)}
-                          tabIndex={0}
-                          role="button"
-                          aria-pressed={selectedProducts.includes(product.id)}
-                        >
-                          <div className="flex items-center gap-2 mb-1">
-                            <input
-                              type="checkbox"
-                              checked={selectedProducts.includes(product.id)}
-                              onChange={() => handleProductToggle(product.id)}
-                              onClick={e => e.stopPropagation()}
-                              className="accent-primary"
-                            />
-                            {product.displayCategory === "on sale" && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded font-medium">SALE</span>}
-                            {product.displayCategory === "display only" && <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded font-medium">DISPLAY</span>}
-                          </div>
-                          <div className="font-medium text-sm truncate">{product.name}</div>
-                          <div className="text-xs text-muted-foreground">{product.id}</div>
-                          <div className="text-emerald-700 font-semibold text-base mt-1">${product.price}</div>
-                          <div className="w-full h-[80px] bg-gray-100 rounded flex items-center justify-center text-xs text-gray-400 mt-2 overflow-hidden">
-                            {product.images && product.images[0] ? (
-                              <img src={product.images[0]} alt={product.name} className="object-cover w-full h-full rounded" />
-                            ) : (
-                              <span>200 x 150</span>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="mt-6 p-4 rounded-lg border bg-white flex flex-col gap-4">
-                <div className="font-semibold text-base mb-1 border-b pb-2">SEO Settings</div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="seo-title">SEO Title</Label>
-                    <Input
-                      id="seo-title"
-                      placeholder="Bundle name for search..."
-                      value={seoTitle}
-                      onChange={e => setSeoTitle(e.target.value)}
-                      className="mt-1"
-                      maxLength={60}
-                    />
-                    <div className="text-xs text-muted-foreground mt-1">Recommended: 50-60 characters</div>
-                  </div>
-                  <div>
-                    <Label htmlFor="seo-keywords">Focus Keywords</Label>
-                    <Input
-                      id="seo-keywords"
-                      placeholder="freshener bundle, car, ..."
-                      value={seoKeywords}
-                      onChange={e => setSeoKeywords(e.target.value)}
-                      className="mt-1"
-                    />
-                    <div className="text-xs text-muted-foreground mt-1">Comma-separated keywords</div>
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="seo-description">SEO Description</Label>
-                  <Textarea
-                    id="seo-description"
-                    placeholder="Description for search engines and social media..."
-                    value={seoDescription}
-                    onChange={e => setSeoDescription(e.target.value)}
-                    className="mt-1"
-                    maxLength={160}
-                  />
-                  <div className="text-xs text-muted-foreground mt-1">Recommended: 150-160 characters</div>
-                </div>
-              </div>
-                </div>
-              </div>
-              {/* Right: Bundle Preview (Sticky) */}
-              <div className="bg-white rounded-xl shadow p-6 border flex flex-col gap-4 min-w-[300px] max-w-[350px] w-full md:w-[350px] self-start sticky top-0 h-fit">
-                <h3 className="text-lg font-semibold mb-2">Bundle Preview</h3>
-                {selectedProductObjs.length === 0 ? (
-                  <div className="flex-1 flex items-center justify-center border border-dashed rounded-lg min-h-[120px] text-muted-foreground text-center text-sm">
-                    Select products to add to your bundle
-                  </div>
-                ) : (
-                  <div className="flex flex-col gap-3 max-h-80 overflow-y-auto">
-                    {selectedProductObjs.map(product => (
-                      <div key={product.id} className="flex flex-col gap-2 border rounded-lg p-3 bg-background relative group">
-                        <div className="flex items-center gap-3 mb-2">
-                          <div className="w-12 h-12 bg-gray-100 rounded flex items-center justify-center overflow-hidden">
-                            {product.images && product.images[0] ? (
-                              <img src={product.images[0]} alt={product.name} className="object-cover w-full h-full rounded" />
-                            ) : (
-                              <span>200 x 150</span>
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="font-semibold text-base truncate">{product.name}</div>
-                          </div>
-                          <button
-                            type="button"
-                            className="absolute top-2 right-2 bg-white border border-gray-200 rounded-full p-1 shadow hover:bg-red-50 hover:text-destructive transition opacity-80 group-hover:opacity-100"
-                            onClick={() => handleProductToggle(product.id)}
-                            tabIndex={0}
-                            aria-label={`Remove ${product.name}`}
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
-                        </div>
-                        <div className="flex items-center gap-2 mb-2">
-                        <div className="bg-gray-50 w-full border rounded-lg p-2 flex flex-col gap-2">
-                          <div className="font-medium text-xs mb-1">Display Ttitle</div>
-                          <div className="flex gap-2 ">
-                            <Input
-                              placeholder="Display Title"
-                              value={bundleProductDetails[product.id]?.billingModelId || ""}
-                              onChange={e => handleBillingModelChange(product.id, e.target.value)}
-                            />
-                            
-                          </div>
-                        </div>
-                        </div>
-                        <div className="flex items-center gap-2 mb-2">
-                          <Checkbox
-                            checked={!!bundleProductDetails[product.id]?.main}
-                            onCheckedChange={() => handleMainChange(product.id)}
-                            id={`main-item-${product.id}`}
-                          />
-                          <label htmlFor={`main-item-${product.id}`} className="text-sm">Main item</label>
-                        </div>
-                        <div className="bg-gray-50 border rounded-lg p-2 flex flex-col gap-2">
-                          <div className="font-medium text-xs mb-1">Sticky Settings</div>
-                          <div className="flex gap-2">
-                            <Input
-                              placeholder="Billing Model ID"
-                              value={bundleProductDetails[product.id]?.billingModelId || ""}
-                              onChange={e => handleBillingModelChange(product.id, e.target.value)}
-                              className="w-1/2"
-                            />
-                            <Input
-                              placeholder="Offer ID"
-                              value={bundleProductDetails[product.id]?.offerId || ""}
-                              onChange={e => handleOfferIdChange(product.id, e.target.value)}
-                              className="w-1/2"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-              {/* SEO Settings */}
-              
-            </div>
-            {/* Footer */}
-            <div className="flex justify-end gap-2 mt-6 shrink-0">
-              <Button variant="outline" onClick={() => setIsCreateModalOpen(false)}>Cancel</Button>
-              <Button
-                onClick={handleCreateBundle}
-                disabled={!bundleName.trim() || selectedProducts.length === 0}
-                className="bg-primary text-white flex items-center gap-2"
-              >
-                <span role="img" aria-label="package">📦</span> Create Bundle
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+
         {/* Filters */}
         <BundlesFilters
           search={search}
@@ -502,8 +103,10 @@ export default function BundlesPage() {
           hasActiveFilters={hasActiveFilters}
           onClearFilters={handleClearFilters}
         />
+
         {/* Bundles grid */}
         <BundlesGrid bundles={paginatedBundles} />
+
         {/* Pagination controls */}
         <BundlesPagination
           page={page}
