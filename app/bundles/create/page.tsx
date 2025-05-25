@@ -115,7 +115,7 @@ export default function CreateBundlePage() {
       billingModelId: bundleProductDetails[p.id]?.billingModelId || "",
       offerId: bundleProductDetails[p.id]?.offerId || "",
     }));
-    const msrp = bundleProducts.reduce((sum, p) => sum + p.price * p.qty, 0);
+    const msrp = bundleProducts.reduce((sum, p) => sum + (p.price ?? 0) * p.qty, 0);
     const bundlePrice = msrp; // You can add discount logic if needed
     const customerSaves = 0;
     const type = [bundleType, "active"];
@@ -437,13 +437,25 @@ export default function CreateBundlePage() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Bundle Price:</span>
-                  <span>${selectedProductObjs.reduce((sum, p) => sum + (bundleProductDetails[p.id]?.qty ?? 1) * (bundleProductDetails[p.id]?.price !== undefined ? bundleProductDetails[p.id]?.price : parseFloat(p.price)), 0).toFixed(2)}</span>
+                  <span>
+                    ${selectedProductObjs.reduce((sum, p) => {
+                      const details = bundleProductDetails[p.id];
+                      const qty = details?.qty ?? 1;
+                      const price = details?.price !== undefined ? details.price : parseFloat(p.price);
+                      return sum + qty * price;
+                    }, 0).toFixed(2)}
+                  </span>
                 </div>
                 <div className="flex justify-between text-base font-semibold mt-2">
                   <span>Customer Saves:</span>
                   <span className="text-green-700">${(
-                    selectedProductObjs.reduce((sum, p) => sum + (bundleProductDetails[p.id]?.qty ?? 1) * parseFloat(p.price), 0) -
-                    selectedProductObjs.reduce((sum, p) => sum + (bundleProductDetails[p.id]?.qty ?? 1) * (bundleProductDetails[p.id]?.price !== undefined ? bundleProductDetails[p.id]?.price : parseFloat(p.price)), 0)
+                    selectedProductObjs.reduce((sum, p) => sum + (bundleProductDetails[p.id]?.qty ?? 1) * parseFloat(p.price), 0) - 
+                    selectedProductObjs.reduce((sum, p) => {
+                      const details = bundleProductDetails[p.id];
+                      const qty = details?.qty ?? 1;
+                      const price = details?.price !== undefined ? details.price : parseFloat(p.price);
+                      return sum + qty * price;
+                    }, 0)
                   ).toFixed(2)}</span>
                 </div>
               </div>

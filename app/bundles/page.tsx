@@ -51,7 +51,7 @@ export default function BundlesPage() {
   const startIndex = (page - 1) * pageSize;
   const paginatedBundles = filteredBundles.slice(startIndex, startIndex + pageSize);
 
-  const hasActiveFilters = search || type !== "all" || status !== "all" || visibility !== "all";
+  const hasActiveFilters = !!search || type !== "all" || status !== "all" || visibility !== "all";
 
   const handleClearFilters = () => {
     setSearch("");
