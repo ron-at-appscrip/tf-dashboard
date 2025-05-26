@@ -178,7 +178,7 @@ export default function CreateBundlePage() {
 
         <div className="flex flex-1 gap-6 min-h-0">
           {/* Left: Bundle Information and Product Selection */}
-          <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden grid grid-cols-1 gap-6 md:block">
+          <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden grid grid-cols-1 gap-6 md:flex md:flex-col">
             <div className="bg-white rounded-xl shadow p-6 flex flex-col gap-4 border min-w-0">
               <h3 className="text-lg font-semibold mb-2">Bundle Information</h3>
               <div>
@@ -248,56 +248,7 @@ export default function CreateBundlePage() {
               </div>
             </div>
 
-            {/* Product Selection */}
-            <div className="bg-white rounded-xl shadow p-6 border">
-              <h4 className="text-base font-semibold mb-3">Select Products</h4>
-              <div className="relative mb-4">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="search"
-                  placeholder="Search products by name or SKU..."
-                  className="pl-8"
-                  value={productSearch}
-                  onChange={e => setProductSearch(e.target.value)}
-                />
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-2 max-h-64 overflow-y-auto overflow-x-hidden min-w-0">
-                {filteredProducts.map(product => (
-                  <div
-                    key={product.id}
-                    className={`border rounded-lg p-3 cursor-pointer transition-colors ${
-                      selectedProducts.includes(product.id)
-                        ? "bg-blue-50 border-blue-200"
-                        : "hover:bg-gray-50"
-                    }`}
-                    onClick={() => handleProductToggle(product.id)}
-                  >
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-12 h-12 bg-gray-100 rounded flex items-center justify-center overflow-hidden">
-                        {product.images && product.images[0] ? (
-                          <img src={product.images[0]} alt={product.name} className="object-cover w-full h-full rounded" />
-                        ) : (
-                          <span>200 x 150</span>
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-base truncate">{product.name}</div>
-                        <div className="text-xs text-muted-foreground">ID: {product.id}</div>
-                      </div>
-                    </div>
-                    <div className="w-full h-[80px] bg-gray-100 rounded flex items-center justify-center text-xs text-gray-400 mt-2 overflow-hidden">
-                      {product.images && product.images[0] ? (
-                        <img src={product.images[0]} alt={product.name} className="object-cover w-full h-full rounded" />
-                      ) : (
-                        <span>200 x 150</span>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* SEO Settings */}
+               {/* SEO Settings */}
             <div className="bg-white rounded-xl shadow p-6 border">
               <div className="font-semibold text-base mb-1 border-b pb-2">SEO Settings</div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -338,6 +289,56 @@ export default function CreateBundlePage() {
                 <div className="text-xs text-muted-foreground mt-1">Recommended: 150-160 characters</div>
               </div>
             </div>
+            {/* Product Selection */}
+            <div className="bg-white rounded-xl shadow  p-6 border">
+              <h4 className="text-base font-semibold mb-3">Select Products</h4>
+              <div className="relative mb-4">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search products by name or SKU..."
+                  className="pl-8"
+                  value={productSearch}
+                  onChange={e => setProductSearch(e.target.value)}
+                />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-2 max-h-[35rem] overflow-y-auto overflow-x-hidden min-w-0">
+                {filteredProducts.map(product => (
+                  <div
+                    key={product.id}
+                    className={`border rounded-lg p-3 cursor-pointer transition-colors ${
+                      selectedProducts.includes(product.id)
+                        ? "bg-blue-50 border-blue-200"
+                        : "hover:bg-gray-50"
+                    }`}
+                    onClick={() => handleProductToggle(product.id)}
+                  >
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-12 h-12 bg-gray-100 rounded flex items-center justify-center overflow-hidden">
+                        {product.images && product.images[0] ? (
+                          <img src={product.images[0]} alt={product.name} className="object-cover w-full h-full rounded" />
+                        ) : (
+                          <span>200 x 150</span>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-semibold text-base truncate">{product.name}</div>
+                        <div className="text-xs text-muted-foreground">ID: {product.id}</div>
+                      </div>
+                    </div>
+                    <div className="w-full h-[80px] bg-gray-100 rounded flex items-center justify-center text-xs text-gray-400 mt-2 overflow-hidden">
+                      {product.images && product.images[0] ? (
+                        <img src={product.images[0]} alt={product.name} className="object-cover w-full h-full rounded" />
+                      ) : (
+                        <span>200 x 150</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          
           </div>
 
           {/* Right: Bundle Preview (Sticky) */}
@@ -423,6 +424,15 @@ export default function CreateBundlePage() {
                           className="w-1/2"
                         />
                       </div>
+                    </div>
+                    <div className="bg-gray-50 w-full border rounded-lg p-2 flex flex-col gap-2">
+                      <div className="font-medium text-xs mb-1">Display Text</div>
+                    
+                        <Input
+                          placeholder="Enter Display Text"
+                          value={bundleProductDetails[product.id]?.offerId || ""}
+                          onChange={e => console.log(e.target.value)}
+                        />
                     </div>
                   </div>
                 ))}
