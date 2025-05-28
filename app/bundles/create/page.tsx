@@ -31,6 +31,7 @@ export default function CreateBundlePage() {
       billingModelId: string;
       offerId: string;
       price?: number;
+      selectedVariantId?: string;
     };
   }>({});
 
@@ -98,6 +99,21 @@ export default function CreateBundlePage() {
     );
   };
 
+  const handleVariantSelect = (productId: string, variantId: string) => {
+    setBundleProductDetails(prev => {
+      const product = products.find(p => p.id === productId);
+      const variant = product?.variants?.find(v => v.id === variantId);
+      return {
+        ...prev,
+        [productId]: {
+          ...prev[productId],
+          selectedVariantId: variantId,
+          price: variant ? parseFloat(variant.price) : prev[productId].price
+        }
+      };
+    });
+  };
+
   // Create Bundle Handler
   function handleCreateBundle() {
     if (!bundleName.trim() || selectedProducts.length === 0) return;
@@ -107,14 +123,21 @@ export default function CreateBundlePage() {
     const now = new Date();
     const date = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`;
     // Prepare products for bundle
-    const bundleProducts = products.filter(p => selectedProducts.includes(p.id)).map((p) => ({
-      name: p.name,
-      qty: bundleProductDetails[p.id]?.qty ?? 1,
-      price: bundleProductDetails[p.id]?.price !== undefined ? bundleProductDetails[p.id]?.price : parseFloat(p.price),
-      main: !!bundleProductDetails[p.id]?.main,
-      billingModelId: bundleProductDetails[p.id]?.billingModelId || "",
-      offerId: bundleProductDetails[p.id]?.offerId || "",
-    }));
+    const bundleProducts = products.filter(p => selectedProducts.includes(p.id)).map((p) => {
+      const details = bundleProductDetails[p.id];
+      const selectedVariant = p.variants?.find(v => v.id === details?.selectedVariantId);
+      return {
+        name: p.name,
+        qty: details?.qty ?? 1,
+        price: details?.price !== undefined ? details.price : parseFloat(selectedVariant?.price || p.price),
+        main: !!details?.main,
+        billingModelId: details?.billingModelId || "",
+        offerId: details?.offerId || "",
+        variantId: details?.selectedVariantId,
+        variantName: selectedVariant?.name
+      };
+    });
+
     const msrp = bundleProducts.reduce((sum, p) => sum + (p.price ?? 0) * p.qty, 0);
     const bundlePrice = msrp; // You can add discount logic if needed
     const customerSaves = 0;
@@ -365,6 +388,29 @@ export default function CreateBundlePage() {
                         <X className="w-4 h-4" />
                       </button>
                     </div>
+                    
+                    {/* Add variant selection if product has variants */}
+                    {product.variants && product.variants.length > 0 && (
+                      <div className="mb-2">
+                        <Label className="text-sm font-medium text-muted-foreground mb-2 block">Select Variant</Label>
+                        <Select
+                          value={bundleProductDetails[product.id]?.selectedVariantId || product.variants[0].id}
+                          onValueChange={(value) => handleVariantSelect(product.id, value)}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select a variant" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {product.variants.map((variant) => (
+                              <SelectItem key={variant.id} value={variant.id}>
+                                {variant.name} - ${variant.price}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+
                     <div className="flex items-center gap-2 mb-2">
                       <div className="flex items-center gap-0 border rounded overflow-hidden bg-white">
                         <Button size="icon" variant="ghost" onClick={() => handleQtyChange(product.id, (bundleProductDetails[product.id]?.qty ?? 1) - 1)} disabled={(bundleProductDetails[product.id]?.qty ?? 1) === 1} className="rounded-none border-0">-</Button>
@@ -374,7 +420,6 @@ export default function CreateBundlePage() {
                           value={bundleProductDetails[product.id]?.qty ?? 1}
                           onChange={e => handleQtyChange(product.id, Number(e.target.value))}
                           className="w-12 text-center border-0 focus:ring-0 focus-visible:ring-0 shadow-none"
-                          style={{ textAlign: 'center' }}
                         />
                         <Button size="icon" variant="ghost" onClick={() => handleQtyChange(product.id, (bundleProductDetails[product.id]?.qty ?? 1) + 1)} className="rounded-none border-0">+</Button>
                       </div>
@@ -443,7 +488,13 @@ export default function CreateBundlePage() {
               <div className="bg-blue-50 rounded-lg p-4 mt-4 flex flex-col gap-2 border border-blue-100">
                 <div className="flex justify-between text-sm">
                   <span>Regular Price:</span>
-                  <span>${selectedProductObjs.reduce((sum, p) => sum + (bundleProductDetails[p.id]?.qty ?? 1) * parseFloat(p.price), 0).toFixed(2)}</span>
+                  <span>${selectedProductObjs.reduce((sum, p) => {
+                    const details = bundleProductDetails[p.id];
+                    const qty = details?.qty ?? 1;
+                    const selectedVariant = p.variants?.find(v => v.id === details?.selectedVariantId);
+                    const price = selectedVariant ? parseFloat(selectedVariant.price) : parseFloat(p.price);
+                    return sum + qty * price;
+                  }, 0).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Bundle Price:</span>
@@ -451,7 +502,12 @@ export default function CreateBundlePage() {
                     ${selectedProductObjs.reduce((sum, p) => {
                       const details = bundleProductDetails[p.id];
                       const qty = details?.qty ?? 1;
-                      const price = details?.price !== undefined ? details.price : parseFloat(p.price);
+                      const selectedVariant = p.variants?.find(v => v.id === details?.selectedVariantId);
+                      const price = details?.price !== undefined 
+                        ? details.price 
+                        : selectedVariant 
+                          ? parseFloat(selectedVariant.price) 
+                          : parseFloat(p.price);
                       return sum + qty * price;
                     }, 0).toFixed(2)}
                   </span>
@@ -459,11 +515,22 @@ export default function CreateBundlePage() {
                 <div className="flex justify-between text-base font-semibold mt-2">
                   <span>Customer Saves:</span>
                   <span className="text-green-700">${(
-                    selectedProductObjs.reduce((sum, p) => sum + (bundleProductDetails[p.id]?.qty ?? 1) * parseFloat(p.price), 0) - 
                     selectedProductObjs.reduce((sum, p) => {
                       const details = bundleProductDetails[p.id];
                       const qty = details?.qty ?? 1;
-                      const price = details?.price !== undefined ? details.price : parseFloat(p.price);
+                      const selectedVariant = p.variants?.find(v => v.id === details?.selectedVariantId);
+                      const price = selectedVariant ? parseFloat(selectedVariant.price) : parseFloat(p.price);
+                      return sum + qty * price;
+                    }, 0) - 
+                    selectedProductObjs.reduce((sum, p) => {
+                      const details = bundleProductDetails[p.id];
+                      const qty = details?.qty ?? 1;
+                      const selectedVariant = p.variants?.find(v => v.id === details?.selectedVariantId);
+                      const price = details?.price !== undefined 
+                        ? details.price 
+                        : selectedVariant 
+                          ? parseFloat(selectedVariant.price) 
+                          : parseFloat(p.price);
                       return sum + qty * price;
                     }, 0)
                   ).toFixed(2)}</span>

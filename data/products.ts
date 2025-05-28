@@ -18,6 +18,52 @@ export const products: Product[] = [
     images: [
       "https://images.pexels.com/photos/4239013/pexels-photo-4239013.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
     ],
+    variants: [
+      {
+        id: "p1-v1",
+        name: "16oz Bottle",
+        price: "12.99",
+        stock: 75,
+        status: "in-stock",
+        attributes: {
+          size: "16oz",
+          scent: "Lavender"
+        }
+      },
+      {
+        id: "p1-v2",
+        name: "32oz Bottle",
+        price: "19.99",
+        stock: 45,
+        status: "in-stock",
+        attributes: {
+          size: "32oz",
+          scent: "Lavender"
+        }
+      },
+      {
+        id: "p1-v3",
+        name: "16oz Bottle",
+        price: "12.99",
+        stock: 25,
+        status: "in-stock",
+        attributes: {
+          size: "16oz",
+          scent: "Citrus"
+        }
+      },
+      {
+        id: "p1-v4",
+        name: "32oz Bottle",
+        price: "19.99",
+        stock: 0,
+        status: "out-of-stock",
+        attributes: {
+          size: "32oz",
+          scent: "Citrus"
+        }
+      }
+    ]
   },
   {
     id: "p2",
@@ -33,6 +79,41 @@ export const products: Product[] = [
     images: [
       "https://images.pexels.com/photos/4226876/pexels-photo-4226876.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
     ],
+    variants: [
+      {
+        id: "p2-v1",
+        name: "Small",
+        price: "24.95",
+        stock: 30,
+        status: "in-stock",
+        attributes: {
+          size: "Small",
+          color: "Natural"
+        }
+      },
+      {
+        id: "p2-v2",
+        name: "Medium",
+        price: "34.95",
+        stock: 28,
+        status: "in-stock",
+        attributes: {
+          size: "Medium",
+          color: "Natural"
+        }
+      },
+      {
+        id: "p2-v3",
+        name: "Large",
+        price: "44.95",
+        stock: 20,
+        status: "in-stock",
+        attributes: {
+          size: "Large",
+          color: "Natural"
+        }
+      }
+    ]
   },
   {
     id: "p3",
@@ -48,6 +129,41 @@ export const products: Product[] = [
     images: [
       "https://images.pexels.com/photos/5378703/pexels-photo-5378703.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
     ],
+    variants: [
+      {
+        id: "p3-v1",
+        name: "Small Set",
+        price: "14.50",
+        stock: 80,
+        status: "in-stock",
+        attributes: {
+          size: "Small",
+          color: "Clear"
+        }
+      },
+      {
+        id: "p3-v2",
+        name: "Medium Set",
+        price: "18.50",
+        stock: 73,
+        status: "in-stock",
+        attributes: {
+          size: "Medium",
+          color: "Clear"
+        }
+      },
+      {
+        id: "p3-v3",
+        name: "Large Set",
+        price: "22.50",
+        stock: 50,
+        status: "in-stock",
+        attributes: {
+          size: "Large",
+          color: "Clear"
+        }
+      }
+    ]
   },
   {
     id: "p4",

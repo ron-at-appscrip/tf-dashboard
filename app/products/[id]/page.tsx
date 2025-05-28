@@ -9,6 +9,7 @@ import { ProductDescription } from "@/components/products/ProductDescription";
 import { ProductMetadata } from "@/components/products/ProductMetadata";
 import { ProductBundles } from "@/components/products/ProductBundles";
 import { ProductShippingInfo } from "@/components/products/ProductShippingInfo";
+import { ProductVariants } from "@/components/products/ProductVariants";
 
 interface ProductDetailsPageProps {
   params: { id: string };
@@ -42,7 +43,9 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <ProductImage product={product} />
-        <ProductInfo product={product} />
+          <ProductInfo product={product} />
+          <ProductVariants product={product} />
+
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">

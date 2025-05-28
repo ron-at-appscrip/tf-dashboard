@@ -6,6 +6,8 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
+
 import {
   Form,
   FormControl,
@@ -145,7 +147,12 @@ export function LoginForm() {
             {t('auth.login.secureLogin.description')}
           </span>
         </div>
+
+        
       </div>
+      <div className="flex justify-center items-center w-full mb-4">
+          <ThemeToggle />
+        </div>
     </div>
   );
 }
