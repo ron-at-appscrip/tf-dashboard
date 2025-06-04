@@ -107,11 +107,11 @@ const getStoreNavItems = (t: (key: string) => string): NavItem[] => [
       { title: t('admin.layout.navigation.orders.abandonedCarts'), href: "/orders/abandoned" },
     ],
   },
-  { 
-    title: t('admin.layout.navigation.customers'), 
-    href: "/customers", 
-    icon: <Users className="h-5 w-5" /> 
-  },
+  // { 
+  //   title: t('admin.layout.navigation.customers'), 
+  //   href: "/customers", 
+  //   icon: <Users className="h-5 w-5" /> 
+  // },
   { 
     title: t('admin.layout.navigation.pageBuilder'), 
     href: "/page-builder", 
